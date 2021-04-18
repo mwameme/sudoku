@@ -69,8 +69,10 @@ void Fenetre::genererSolution(){
 
     string s_generer;
     for(int j(0);j<9;++j){
-        for(int i(0);i<9;++i)
+        for(int i(0);i<9;++i){
             s_generer += std::to_string(tableau[i][j]);
+            s_generer += " ";
+           }
         s_generer+='\n';
     }
 

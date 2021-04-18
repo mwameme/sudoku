@@ -8,44 +8,44 @@ using namespace std;
 
 Cellule::Cellule()
 {
-    this->m_listeNum.resize(9,true);
-    this->m_valeur=0;
-    this->m_taille=9;
+    m_listeNum.resize(9,true);
+    m_valeur=0;
+    m_taille=9;
 }
 
 Cellule::Cellule(int num)
 {
     //vector<bool> vec(9,false);
-    this->m_listeNum.resize(9,false);
-    this->m_valeur=num;
-    this->m_taille=1;
-    this->m_listeNum[num-1]=true;
+    m_listeNum.resize(9,false);
+    m_valeur=num;
+    m_taille=1;
+    m_listeNum[num-1]=true;
 }
 
 Cellule::Cellule(Cellule const& cellule,Carte* carte){
-    this->m_listeNum=cellule.m_listeNum;
-    this->m_valeur = cellule.m_valeur;
-    this->m_taille = cellule.m_taille;
-    this->m_carte = carte;
-    this->m_x=cellule.m_x;
-    this->m_y=cellule.m_y;
+    m_listeNum=cellule.m_listeNum;
+    m_valeur = cellule.m_valeur;
+    m_taille = cellule.m_taille;
+    m_carte = carte;
+    m_x=cellule.m_x;
+    m_y=cellule.m_y;
 }
 
 bool Cellule::setOff(int num) //enleve num; si taille =1, appeler setValeur. Si possibles =0 return false
 {
     //cout<<"celO";
-    if (this->m_listeNum[num-1])
+    if (m_listeNum[num-1])
     {
-        this->m_listeNum[num-1]=false;
-        this->m_carte->m_modifie=true;
-        --(this->m_taille);
-        if (this->m_taille == 0) return false;
-        if (this->m_taille==1)
+        m_listeNum[num-1]=false;
+        m_carte->m_modifie=true;
+        --(m_taille);
+        if (m_taille == 0) return false;
+        if (m_taille==1)
             for(int i(0); i<9; ++i)
-                if(this->m_listeNum[i]==true)
+                if(m_listeNum[i]==true)
                 {
-                    this->m_valeur=i+1;
-                    if (!this->m_carte->setValeur(this->m_x,this->m_y,i+1))
+                    m_valeur=i+1;
+                    if (!m_carte->setValeur(m_x,m_y,i+1))
                         return false;//appelle aussi cellule.setValeur
                     break;
                 }
@@ -58,22 +58,22 @@ bool Cellule::setValeur(int num)
 {
     if (num==0)
         return true;
-    if ((this->m_valeur!=0) && (this->m_valeur != num))
+    if ((m_valeur!=0) && (m_valeur != num))
         return false;//si �a change
 
-    if (this->m_taille > 1){
-        this->m_carte->m_modifie = true;
+    if (m_taille > 1){
+        m_carte->m_modifie = true;
         for(int i(0); i<9; ++i)
-            this->m_listeNum[i]=false;
-        this->m_listeNum[num-1]=true;
-        this->m_taille = 1;
-        this->m_valeur = num;
+            m_listeNum[i]=false;
+        m_listeNum[num-1]=true;
+        m_taille = 1;
+        m_valeur = num;
     }
-    else if (this->m_taille==1){
-        this->m_valeur = num;
-        this->m_carte->m_modifie = true;
+    else if (m_taille==1){
+        m_valeur = num;
+        m_carte->m_modifie = true;
     }
-    if (this->m_taille ==0)
+    if (m_taille ==0)
         return false;
 
     return true;
@@ -91,35 +91,35 @@ Carre::Carre()
 
 Ligne::Ligne(int j, Carte* carte)  // cree la ligne
 {
-    this->m_carte=carte;
-    this->m_cellules.resize(9,NULL);
+    m_carte=carte;
+    m_cellules.resize(9,NULL);
 
     for(int i(0); i<9; ++i)
-        this->m_cellules[i]=& (carte->m_liste_cellules[i][j]);
-    this->m_y=j;
+        m_cellules[i]=& (carte->m_liste_cellules[i][j]);
+    m_y=j;
 
 //    vector<vector<Cellule*>> vec2(9,vector<Cellule*>(0));
-    this->m_liste_num.reserve(81 * sizeof(Cellule*));
-    this->m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
+    m_liste_num.reserve(81 * sizeof(Cellule*));
+    m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
 
    // cout<<"allocation ligne"<<endl;
     for(int num(0); num<9; ++num)
         for(int i(0); i<9; ++i)
-            if (this->m_cellules[i]->m_listeNum[num]==true)
-                this->m_liste_num[num].push_back(this->m_cellules[i]);
+            if (m_cellules[i]->m_listeNum[num]==true)
+                m_liste_num[num].push_back(m_cellules[i]);
 }
 
 Ligne::Ligne(Ligne const& ligne, Carte* carte){
-    this->m_y =ligne.m_y;
-    this->m_carte=carte;
-    this->m_cellules.resize(9,NULL);
+    m_y =ligne.m_y;
+    m_carte=carte;
+    m_cellules.resize(9,NULL);
     for(int i(0);i<9;++i)
-        this->m_cellules[i]=& (carte->m_liste_cellules[ligne.m_cellules[i]->m_x][ligne.m_cellules[i]->m_y]);
-    this->m_liste_num.reserve(81 * sizeof(Cellule*));
-    this->m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
+        m_cellules[i]=& (carte->m_liste_cellules[ligne.m_cellules[i]->m_x][ligne.m_cellules[i]->m_y]);
+    m_liste_num.reserve(81 * sizeof(Cellule*));
+    m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
     for(int num(0); num<9; ++num)
         for(int k(0);k<ligne.m_liste_num[num].size();++k)
-            this->m_liste_num[num].push_back(&( carte->m_liste_cellules[ligne.m_liste_num[num][k]->m_x][ligne.m_liste_num[num][k]->m_y]));
+            m_liste_num[num].push_back(&( carte->m_liste_cellules[ligne.m_liste_num[num][k]->m_x][ligne.m_liste_num[num][k]->m_y]));
     return;
 }
 
@@ -127,14 +127,14 @@ Ligne::Ligne(Ligne const& ligne, Carte* carte){
 bool Ligne::setOff(int x,int val)
 {
     //cout<<"ligO";
-    for(int i(0); i<this->m_liste_num[val-1].size(); ++i)
-        if (this->m_liste_num[val-1][i]->m_x==x)
+    for(int i(0); i<m_liste_num[val-1].size(); ++i)
+        if (m_liste_num[val-1][i]->m_x==x)
         {
-            this->m_liste_num[val-1].erase(this->m_liste_num[val-1].begin()+i);
+            m_liste_num[val-1].erase(m_liste_num[val-1].begin()+i);
             if (m_liste_num[val-1].size()==1)
-                if (!(this->m_carte->setValeur(this->m_liste_num[val-1][0]->m_x,this->m_y,val)))
+                if (!(m_carte->setValeur(m_liste_num[val-1][0]->m_x,m_y,val)))
                     return false;
-            if (this->m_liste_num[val-1].size()==0)
+            if (m_liste_num[val-1].size()==0)
                 return false;
             break;
         }
@@ -147,66 +147,66 @@ bool Ligne::setValeur(int x,int val)
     for(int i(0); i<9; ++i)
         if(x!=i)
         {
-            if(this->m_cellules[i]->m_listeNum[val-1]){
-                if (!(this->m_cellules[i]->setOff(val)))
+            if(m_cellules[i]->m_listeNum[val-1]){
+                if (!(m_cellules[i]->setOff(val)))
                     return false;
-                if (!(this->m_carte->m_liste_colonnes[i].setOff(this->m_y,val)))
+                if (!(m_carte->m_liste_colonnes[i].setOff(m_y,val)))
                     return false;
-                if (!(this->m_carte->m_liste_carres[i/3 +3*(this->m_y/3)].setOff(i%3+(this->m_y%3)*3,val)))
+                if (!(m_carte->m_liste_carres[i/3 +3*(m_y/3)].setOff(i%3+(m_y%3)*3,val)))
                     return false;;
             }
         }
-    this->m_liste_num[val-1].erase(this->m_liste_num[val-1].begin(),this->m_liste_num[val-1].end());
-    this->m_liste_num[val-1].push_back(&(this->m_carte->m_liste_cellules[x][this->m_y]));
+    m_liste_num[val-1].erase(m_liste_num[val-1].begin(),m_liste_num[val-1].end());
+    m_liste_num[val-1].push_back(&(m_carte->m_liste_cellules[x][m_y]));
     return true;
 }
 
 
 Colonne::Colonne(int i, Carte* carte)
 {
-    this->m_carte=carte;
-    this->m_cellules.resize(9,NULL);
+    m_carte=carte;
+    m_cellules.resize(9,NULL);
 
     for(int j(0); j<9; ++j)
-        this->m_cellules[j]=& (this->m_carte->m_liste_cellules[i][j]);
-    this->m_x=i;
+        m_cellules[j]=& (m_carte->m_liste_cellules[i][j]);
+    m_x=i;
 
 //    vector<vector<Cellule*>> vec2(9,vector<Cellule*>(0));
-    this->m_liste_num.reserve(81 * sizeof(Cellule*));
-    this->m_liste_num.resize(9,vector<Cellule*>());
+    m_liste_num.reserve(81 * sizeof(Cellule*));
+    m_liste_num.resize(9,vector<Cellule*>());
 
     for(int num(0); num<9; ++num)
         for(int j(0); j<9; ++j)
-            if (this->m_cellules[j]->m_listeNum[num]==true)
-                this->m_liste_num[num].push_back(this->m_cellules[j]);
+            if (m_cellules[j]->m_listeNum[num]==true)
+                m_liste_num[num].push_back(m_cellules[j]);
     return;
 }
 
 Colonne::Colonne(Colonne const& colonne, Carte* carte){
-    this->m_x =colonne.m_x;
-    this->m_carte=carte;
-    this->m_cellules.resize(9,NULL);
+    m_x =colonne.m_x;
+    m_carte=carte;
+    m_cellules.resize(9,NULL);
     for(int j(0);j<9;++j)
-        this->m_cellules[j]=& carte->m_liste_cellules[colonne.m_cellules[j]->m_x][colonne.m_cellules[j]->m_y];
+        m_cellules[j]=& carte->m_liste_cellules[colonne.m_cellules[j]->m_x][colonne.m_cellules[j]->m_y];
 
-    this->m_liste_num.reserve(81*sizeof(Cellule*));
-    this->m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
+    m_liste_num.reserve(81*sizeof(Cellule*));
+    m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
     for(int num(0); num<9; ++num)
         for(int k(0);k<colonne.m_liste_num[num].size();++k)
-            this->m_liste_num[num].push_back(& (carte->m_liste_cellules[colonne.m_liste_num[num][k]->m_x][colonne.m_liste_num[num][k]->m_y]));
+            m_liste_num[num].push_back(& (carte->m_liste_cellules[colonne.m_liste_num[num][k]->m_x][colonne.m_liste_num[num][k]->m_y]));
 }
 
 bool Colonne::setOff(int y,int val)
 {
     //cout<<"colO";
-    for(int j(0); j<this->m_liste_num[val-1].size(); ++j)
-        if (this->m_liste_num[val-1][j]->m_y==y)
+    for(int j(0); j<m_liste_num[val-1].size(); ++j)
+        if (m_liste_num[val-1][j]->m_y==y)
         {
-            this->m_liste_num[val-1].erase(this->m_liste_num[val-1].begin()+j);
-            if (this->m_liste_num[val-1].size()==1)
-                if (!(this->m_carte->setValeur(this->m_x,this->m_liste_num[val-1][0]->m_y,val)))
+            m_liste_num[val-1].erase(m_liste_num[val-1].begin()+j);
+            if (m_liste_num[val-1].size()==1)
+                if (!(m_carte->setValeur(m_x,m_liste_num[val-1][0]->m_y,val)))
                     return false;
-            if (this->m_liste_num[val-1].size()==0)
+            if (m_liste_num[val-1].size()==0)
                 return false;
             break;
         }
@@ -219,72 +219,72 @@ bool Colonne::setValeur(int y,int val)
     for(int j(0); j<9; ++j)
         if(y!=j)
         {
-            if(this->m_cellules[j]->m_listeNum[val-1]){
-                if (!(this->m_cellules[j]->setOff(val)))
+            if(m_cellules[j]->m_listeNum[val-1]){
+                if (!(m_cellules[j]->setOff(val)))
                     return false;
-                if (!(this->m_carte->m_liste_lignes[j].setOff(this->m_x,val)))
+                if (!(m_carte->m_liste_lignes[j].setOff(m_x,val)))
                     return false;
-                if (!(this->m_carte->m_liste_carres[this->m_x/3+3*(j/3)].setOff((this->m_x%3)+(j%3)*3,val)))
+                if (!(m_carte->m_liste_carres[m_x/3+3*(j/3)].setOff((m_x%3)+(j%3)*3,val)))
                     return false;
             }
         }
-    this->m_liste_num[val-1].erase(this->m_liste_num[val-1].begin(),this->m_liste_num[val-1].end());
-    this->m_liste_num[val-1].push_back(&(this->m_carte->m_liste_cellules[this->m_x][y]));
+    m_liste_num[val-1].erase(m_liste_num[val-1].begin(),m_liste_num[val-1].end());
+    m_liste_num[val-1].push_back(&(m_carte->m_liste_cellules[m_x][y]));
     return true;
 }
 
 
 Carre::Carre(int c,Carte* carte)
 {
-    this->m_carte= carte;
-    this->m_c =c;
-    int m_i=this->m_c%3; //m_c=m_i+3*m_j
-    int m_j=this->m_c/3;
+    m_carte= carte;
+    m_c =c;
+    int m_i=m_c%3; //m_c=m_i+3*m_j
+    int m_j=m_c/3;
 
 //    vector<Cellule*> vec(9,NULL);
-    this->m_cellules.resize(9,NULL);
+    m_cellules.resize(9,NULL);
 
     for(int i(0); i<3; ++i)
         for(int j(0); j<3; ++j)
-            this->m_cellules[i+3*j] = & (this->m_carte->m_liste_cellules[3*m_i+i][3*m_j+j]);
+            m_cellules[i+3*j] = & (m_carte->m_liste_cellules[3*m_i+i][3*m_j+j]);
 
-    this->m_liste_num.reserve(81*sizeof(Cellule*));
-    this->m_liste_num.resize(9,vector<Cellule*>(0));
+    m_liste_num.reserve(81*sizeof(Cellule*));
+    m_liste_num.resize(9,vector<Cellule*>(0));
 
     for(int i(0); i<3; ++i)
         for(int j(0); j<3; ++j)
             for(int num(0); num<9; ++num)
-                if (this->m_cellules[i+3*j]->m_listeNum[num]==true)
-                    this->m_liste_num[num].push_back(this->m_cellules[i+3*j]);
+                if (m_cellules[i+3*j]->m_listeNum[num]==true)
+                    m_liste_num[num].push_back(m_cellules[i+3*j]);
 
 }
 
 Carre::Carre(Carre const& carre, Carte* carte){
-    this->m_c =carre.m_c;
-    this->m_carte=carte;
-    this->m_cellules.resize(9,NULL);
+    m_c =carre.m_c;
+    m_carte=carte;
+    m_cellules.resize(9,NULL);
     for(int k(0);k<9;++k)
-        this->m_cellules[k]=& (this->m_carte->m_liste_cellules[carre.m_cellules[k]->m_x][carre.m_cellules[k]->m_y]);
+        m_cellules[k]=& (m_carte->m_liste_cellules[carre.m_cellules[k]->m_x][carre.m_cellules[k]->m_y]);
 
-    this->m_liste_num.reserve(81*sizeof(Cellule*));
-    this->m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
+    m_liste_num.reserve(81*sizeof(Cellule*));
+    m_liste_num.resize(9,vector<Cellule*>()); //remplit le tableau
     for(int num(0); num<9; ++num)
         for(int iter(0);iter<carre.m_liste_num[num].size();++iter)
-            this->m_liste_num[num].push_back(& carte->m_liste_cellules[carre.m_liste_num[num][iter]->m_x][carre.m_liste_num[num][iter]->m_y]);
+            m_liste_num[num].push_back(& carte->m_liste_cellules[carre.m_liste_num[num][iter]->m_x][carre.m_liste_num[num][iter]->m_y]);
     return;
 }
 
 bool Carre::setOff(int k,int val)
 {
     //cout<<"carO";
-    for(int j(0); j<this->m_liste_num[val-1].size(); ++j)
-        if (((this->m_liste_num[val-1][j]->m_x % 3) + 3 * (this->m_liste_num[val-1][j]->m_y%3))==k)
+    for(int j(0); j<m_liste_num[val-1].size(); ++j)
+        if (((m_liste_num[val-1][j]->m_x % 3) + 3 * (m_liste_num[val-1][j]->m_y%3))==k)
         {
-            this->m_liste_num[val-1].erase(this->m_liste_num[val-1].begin()+j);
-            if (this->m_liste_num[val-1].size()==1)//
-                if (!(m_carte->setValeur(this->m_liste_num[val-1][0]->m_x,this->m_liste_num[val-1][0]->m_y,val)))
+            m_liste_num[val-1].erase(m_liste_num[val-1].begin()+j);
+            if (m_liste_num[val-1].size()==1)//
+                if (!(m_carte->setValeur(m_liste_num[val-1][0]->m_x,m_liste_num[val-1][0]->m_y,val)))
                     return false;
-            if (this->m_liste_num[val-1].size()==0)
+            if (m_liste_num[val-1].size()==0)
                 return false;
             break;
         };
@@ -298,57 +298,57 @@ bool Carre::setValeur(int k,int val)
     for(int j(0); j<9; ++j)
         if(k!=j)
         {
-            if(this->m_cellules[j]->m_listeNum[val-1]){
-                if (!(this->m_cellules[j]->setOff(val)))
+            if(m_cellules[j]->m_listeNum[val-1]){
+                if (!(m_cellules[j]->setOff(val)))
                     return false;
-                if (!(this->m_carte->m_liste_lignes[(j/3) + 3* (this->m_c/3)].setOff(j%3+(this->m_c%3) *3,val)))
+                if (!(m_carte->m_liste_lignes[(j/3) + 3* (m_c/3)].setOff(j%3+(m_c%3) *3,val)))
                     return false;
-                if (!(this->m_carte->m_liste_colonnes[j%3+(this->m_c%3) *3].setOff((j/3) + 3* (this->m_c/3),val)))
+                if (!(m_carte->m_liste_colonnes[j%3+(m_c%3) *3].setOff((j/3) + 3* (m_c/3),val)))
                     return false;
             }
         }
-    this->m_liste_num[val-1].erase(this->m_liste_num[val-1].begin(),this->m_liste_num[val-1].end());
-    this->m_liste_num[val-1].push_back(&(this->m_carte->m_liste_cellules[(k%3) + 3*(this->m_c % 3)][(k/3) + 3*(this->m_c/3)]));
+    m_liste_num[val-1].erase(m_liste_num[val-1].begin(),m_liste_num[val-1].end());
+    m_liste_num[val-1].push_back(&(m_carte->m_liste_cellules[(k%3) + 3*(m_c % 3)][(k/3) + 3*(m_c/3)]));
     return true;
 }
 
 Carte::Carte(string string_sudoku)
 {
-    this->m_liste_cellules.resize(9,vector<Cellule>(9));
+    m_liste_cellules.resize(9,vector<Cellule>(9));
     //cout<<"ok"<<endl;
     for(int i(0); i<9; ++i)
         for(int j(0); j<9; ++j)
         {
-            //this->m_cellules[i][j];
-            this->m_liste_cellules[i][j]=Cellule();
-            this->m_liste_cellules[i][j].m_x=i;
-            this->m_liste_cellules[i][j].m_y=j;
-            this->m_liste_cellules[i][j].m_carte=this;
+            //m_cellules[i][j];
+            m_liste_cellules[i][j]=Cellule();
+            m_liste_cellules[i][j].m_x=i;
+            m_liste_cellules[i][j].m_y=j;
+            m_liste_cellules[i][j].m_carte=this;
         }
     //cout<<"allocation tab"<<endl;
-    this->m_liste_lignes.resize(9);
+    m_liste_lignes.resize(9);
     for(int i(0); i<9;++i)
-        this->m_liste_lignes[i]=Ligne(i,this);
+        m_liste_lignes[i]=Ligne(i,this);
     //cout<<"allocation ligne"<<endl;
 
-    this->m_liste_colonnes.resize(9);
+    m_liste_colonnes.resize(9);
     for(int i(0); i<9;++i)
-        this->m_liste_colonnes[i]=Colonne(i,this);
+        m_liste_colonnes[i]=Colonne(i,this);
 
     //cout<<"allocation colonne"<<endl;
 
 
 
-    this->m_liste_carres.resize(9);
+    m_liste_carres.resize(9);
     for(int i(0); i<9;++i)
-        this->m_liste_carres[i]=Carre(i,this);
+        m_liste_carres[i]=Carre(i,this);
 
     //cout<<"allocation carr�s"<<endl;
 
 
     int i(0),j(0);
     int iter(0);
-    this->m_erreur_carte=true;
+    m_erreur_carte=true;
     do
     {
         char a=string_sudoku[iter];
@@ -362,11 +362,11 @@ Carte::Carte(string string_sudoku)
         {
             if((i>8)||(j>8)){
                 cout<<"mauvais fichier : ne respecte pas la norme"<<endl;
-                this->m_erreur_carte=false;
+                m_erreur_carte=false;
                 break;
             }
-            if (! (this->setValeur(i,j,numero))){
-                this->m_erreur_carte=false;
+            if (! (setValeur(i,j,numero))){
+                m_erreur_carte=false;
                 cout<<"erreur carte !"<<endl;
                 break;
             }
@@ -379,19 +379,21 @@ Carte::Carte(string string_sudoku)
             //cout<<"saut"<<endl;
         }
         if(i>10)
-            j=9;
+            break;
         ++iter;
+        if(iter>=string_sudoku.size())
+            break;
     } while((j<=8));
 
-    if (!this->m_erreur_carte)
+    if (!m_erreur_carte)
     {
         cout<<"pas de lancement du jeu ..."<<endl;
         cout<<*this;
         return;
     }
 
-    if (!this->faireCalculer()){
-        this->m_erreur_carte = false;
+    if (!faireCalculer()){
+        m_erreur_carte = false;
         cout<<"erreur carte !"<<endl;
     }
 
@@ -403,13 +405,13 @@ Carte::Carte(string string_sudoku)
 
 bool Carte::setOff(int x,int y,int val)
 {
-    if (!(this->m_liste_cellules[x][y].setOff(val)))
+    if (!(m_liste_cellules[x][y].setOff(val)))
         return false;
-    if (!(this->m_liste_lignes[y].setOff(x,val)))
+    if (!(m_liste_lignes[y].setOff(x,val)))
         return false;
-    if (!(this->m_liste_colonnes[x].setOff(y,val)))
+    if (!(m_liste_colonnes[x].setOff(y,val)))
         return false;
-    if (!(this->m_liste_carres[(x/3) + 3* (y/3)].setOff((x%3) + 3*(y%3),val)))
+    if (!(m_liste_carres[(x/3) + 3* (y/3)].setOff((x%3) + 3*(y%3),val)))
         return false;
 
     //cout<<val;
@@ -419,13 +421,13 @@ bool Carte::setOff(int x,int y,int val)
 bool Carte::setValeur(int x,int y,int val)
 {
     //cout<<x<<","<<y<<endl;
-    if (!(this->m_liste_cellules[x][y].setValeur(val)))
+    if (!(m_liste_cellules[x][y].setValeur(val)))
         return false;
-    if (!(this->m_liste_lignes[y].setValeur(x,val)))
+    if (!(m_liste_lignes[y].setValeur(x,val)))
         return false;
-    if (!(this->m_liste_colonnes[x].setValeur(y,val)))
+    if (!(m_liste_colonnes[x].setValeur(y,val)))
         return false;
-    if (!(this->m_liste_carres[(x/3) + 3* (y/3)].setValeur((x%3) + 3*(y%3),val)))
+    if (!(m_liste_carres[(x/3) + 3* (y/3)].setValeur((x%3) + 3*(y%3),val)))
         return false;
 
     //cout<<val;
@@ -443,7 +445,7 @@ bool Carte::calculerSi()
             int l[3]= {0,0,0}; //    on regarde les trois lignes, si c'est sur une seule...
             for(int i(0); i<3; ++i)
                 for(int j(0); j<3; j++)
-                    if(this->m_liste_cellules[3*(c%3)+i][3*(c/3)+j].m_listeNum[valeur-1])
+                    if(m_liste_cellules[3*(c%3)+i][3*(c/3)+j].m_listeNum[valeur-1])
                         l[j]=1;
             if((l[0]+l[1]+l[2] )== 1) {
                 int nligne = 0 + l[1] + l[2]*2; //on est sur la ligne nligne
@@ -451,15 +453,15 @@ bool Carte::calculerSi()
                 {
                     if (i/3 == (c%3)) //si on est dans le carr�
                         continue;
-                    if (this->m_liste_cellules[i][3*(c/3)+nligne].m_listeNum[valeur-1]) //si on est hors du carr�, sur la ligne ...
-                        if (!this->setOff(i,3*(c/3)+nligne,valeur))
+                    if (m_liste_cellules[i][3*(c/3)+nligne].m_listeNum[valeur-1]) //si on est hors du carr�, sur la ligne ...
+                        if (!setOff(i,3*(c/3)+nligne,valeur))
                             return false;
                 }
             }
             int l2[3]= {0,0,0}; //    on regarde les trois colonnes, dans le carr�...
             for(int i(0); i<3; ++i)
                 for(int j(0); j<3; j++)
-                    if(this->m_liste_cellules[3*(c%3)+i][3*(c/3)+j].m_listeNum[valeur-1])
+                    if(m_liste_cellules[3*(c%3)+i][3*(c/3)+j].m_listeNum[valeur-1])
                         l2[i]=1;
             if((l2[0]+l2[1]+l2[2]) == 1){
                 int ncolonne = 0 + l2[1] + l2[2]*2;
@@ -467,8 +469,8 @@ bool Carte::calculerSi()
                 {
                     if (j/3 == c/3)
                         continue;
-                    if (this->m_liste_cellules[3*(c%3)+ncolonne][j].m_listeNum[valeur-1])
-                        if (! this->setOff(3*(c%3)+ncolonne,j,valeur))
+                    if (m_liste_cellules[3*(c%3)+ncolonne][j].m_listeNum[valeur-1])
+                        if (! setOff(3*(c%3)+ncolonne,j,valeur))
                             return false;
                 }
             }
@@ -479,7 +481,7 @@ bool Carte::calculerSi()
         {
             int l[3]= {0,0,0}; //on regarde le carr�
             for(int i(0); i<9; ++i)
-                if (this->m_liste_cellules[i][ligne].m_listeNum[valeur-1])
+                if (m_liste_cellules[i][ligne].m_listeNum[valeur-1])
                     l[i/3]=1; //dans quel carr� c'est
             if ((l[0]+l[1]+l[2]) ==1){ //si dans un seul carr�
                 int ncarre=0+ l[1]+2*l[2]; //x du carr� (0,1,2)
@@ -487,8 +489,8 @@ bool Carte::calculerSi()
                 {
                     if ( i/3 + (ligne/3)*3 == ligne) //si on est hors de la ligne, dans le carr�
                         continue;
-                    if (this->m_liste_cellules[ncarre*3 + i%3][i/3 + (ligne/3)*3].m_listeNum[valeur-1])
-                        if (! this->setOff(ncarre*3 + i%3,i/3 + (ligne/3)*3,valeur))
+                    if (m_liste_cellules[ncarre*3 + i%3][i/3 + (ligne/3)*3].m_listeNum[valeur-1])
+                        if (! setOff(ncarre*3 + i%3,i/3 + (ligne/3)*3,valeur))
                             return false;
                 }
             }
@@ -500,7 +502,7 @@ bool Carte::calculerSi()
         {
             int c[3]= {0,0,0};
             for(int j(0); j<9; ++j) //dans la colonne
-                if (this->m_liste_cellules[colonne][j].m_listeNum[valeur-1])
+                if (m_liste_cellules[colonne][j].m_listeNum[valeur-1])
                     c[j/3]=1;
             if (c[0]+c[1]+c[2] ==1){
                 int ncarre=0+ c[1]+2*c[2]; //le numero du carr� dans la colonne : on enleve dans ce carr�
@@ -508,8 +510,8 @@ bool Carte::calculerSi()
                 {
                     if ( i%3 + (colonne/3)*3 == colonne) //dans les autres colonnes, dans le carr�
                         continue;
-                    if (this->m_liste_cellules[i%3 + (colonne/3)*3][ncarre*3 + i/3].m_listeNum[valeur-1])
-                        if ( ! this->setOff(i%3 + (colonne/3)*3,ncarre*3 + i/3,valeur))
+                    if (m_liste_cellules[i%3 + (colonne/3)*3][ncarre*3 + i/3].m_listeNum[valeur-1])
+                        if ( ! setOff(i%3 + (colonne/3)*3,ncarre*3 + i/3,valeur))
                             return false;
                 }//fin du carr�
             }//fin du si
@@ -523,8 +525,8 @@ bool Carte::calculerTriplet(){
         vector<Cellule*> vecTriplet;
         vecTriplet.resize(0);
         for(int i(0);i<9;++i)
-            if((this->m_liste_cellules[i][j].m_taille <= 3) && (this->m_liste_cellules[i][j].m_taille>1))  //on regarde les cellules de taille 3 ou 2
-                vecTriplet.push_back(& this->m_liste_cellules[i][j]);//on les range dans le vector
+            if((m_liste_cellules[i][j].m_taille <= 3) && (m_liste_cellules[i][j].m_taille>1))  //on regarde les cellules de taille 3 ou 2
+                vecTriplet.push_back(& m_liste_cellules[i][j]);//on les range dans le vector
 //        cout<<"taille ligne :"<<vecTriplet.size();
         for(int k1(2);k1<vecTriplet.size();++k1) //si au moins 3 triplets
             for(int k2(1);k2<k1;++k2)
@@ -563,9 +565,9 @@ bool Carte::calculerTriplet(){
                                 trouveIter=true;
                         if(!trouveIter)
                             for(int iter(0);iter<3;++iter)
-                                if(this->m_liste_cellules[i][j].m_listeNum[tableauValeur[iter]-1]){
+                                if(m_liste_cellules[i][j].m_listeNum[tableauValeur[iter]-1]){
 //                                    cout<<i<<","<<j<<","<<tableauValeur[iter]<<endl;
-                                    if(! this->setOff(i,j,tableauValeur[iter]))
+                                    if(! setOff(i,j,tableauValeur[iter]))
                                         return false;
                                 }
 
@@ -577,8 +579,8 @@ bool Carte::calculerTriplet(){
         vector<Cellule*> vecTriplet;
         vecTriplet.resize(0);
         for(int j(0);j<9;++j)
-            if((this->m_liste_cellules[i][j].m_taille <= 3) && (this->m_liste_cellules[i][j].m_taille > 1))  //on regarde les cellules de taille 3
-                vecTriplet.push_back(&this->m_liste_cellules[i][j]);//on les range dans le vector
+            if((m_liste_cellules[i][j].m_taille <= 3) && (m_liste_cellules[i][j].m_taille > 1))  //on regarde les cellules de taille 3
+                vecTriplet.push_back(&m_liste_cellules[i][j]);//on les range dans le vector
 //        cout<<"taille colonne :"<<vecTriplet.size();
         for(int k1(2);k1<vecTriplet.size();++k1)
             for(int k2(1);k2<k1;++k2)
@@ -617,9 +619,9 @@ bool Carte::calculerTriplet(){
                                 trouveIter=true;
                         if(!trouveIter)
                             for(int iter(0);iter<3;++iter)
-                                if(this->m_liste_cellules[i][j].m_listeNum[tableauValeur[iter]-1]){
+                                if(m_liste_cellules[i][j].m_listeNum[tableauValeur[iter]-1]){
 //                                    cout<<i<<","<<j<<","<<tableauValeur[iter]<<endl;
-                                    if(!this->setOff(i,j,tableauValeur[iter]))
+                                    if(!setOff(i,j,tableauValeur[iter]))
                                         return false;
                                 }
                     }
@@ -631,10 +633,10 @@ bool Carte::calculerTriplet(){
         vector<Cellule*> vecTriplet;
         vecTriplet.resize(0);
         for(int k(0);k<9;++k)
-//            if((this->m_liste_cellules[3*(c%3)+k%3][3*(c/3)+k/3].m_taille <= 3) && (this->m_liste_cellules[3*(c%3)+k%3][3*(c/3)+k/3].m_taille <= 3))//on regarde les cellules de taille 3
-//                vecTriplet.push_back(&this->m_liste_cellules[3*(c%3)+k%3][3*(c/3)+k/3]);//on les range dans le vector
-            if((this->m_liste_carres[c].m_cellules[k]->m_taille <= 3) && (this->m_liste_carres[c].m_cellules[k]->m_taille <= 3))//on regarde les cellules de taille 3
-                vecTriplet.push_back(this->m_liste_carres[c].m_cellules[k]);//on les range dans le vector
+//            if((m_liste_cellules[3*(c%3)+k%3][3*(c/3)+k/3].m_taille <= 3) && (m_liste_cellules[3*(c%3)+k%3][3*(c/3)+k/3].m_taille <= 3))//on regarde les cellules de taille 3
+//                vecTriplet.push_back(&m_liste_cellules[3*(c%3)+k%3][3*(c/3)+k/3]);//on les range dans le vector
+            if((m_liste_carres[c].m_cellules[k]->m_taille <= 3) && (m_liste_carres[c].m_cellules[k]->m_taille <= 3))//on regarde les cellules de taille 3
+                vecTriplet.push_back(m_liste_carres[c].m_cellules[k]);//on les range dans le vector
 //        cout<<"taille carre :"<<vecTriplet.size();
         for(int k1(2);k1<vecTriplet.size();++k1)
             for(int k2(1);k2<k1;++k2)
@@ -673,9 +675,9 @@ bool Carte::calculerTriplet(){
                                 trouveIter=true;
                         if(!trouveIter)
                             for(int iter(0);iter<3;++iter)
-                                if(this->m_liste_cellules[(c_k%3)+3*(c%3)][(c_k/3)+3*(c/3)].m_listeNum[tableauValeur[iter]-1]){
+                                if(m_liste_cellules[(c_k%3)+3*(c%3)][(c_k/3)+3*(c/3)].m_listeNum[tableauValeur[iter]-1]){
 //                                    cout<<(c_k%3)+3*(c%3)<<","<<(c_k/3)+3*(c/3)<<","<<tableauValeur[iter]<<endl;
-                                    if(!this->setOff((c_k%3)+3*(c%3),(c_k/3)+3*(c/3),tableauValeur[iter]))
+                                    if(!setOff((c_k%3)+3*(c%3),(c_k/3)+3*(c/3),tableauValeur[iter]))
                                         return false;
                                 }
                     } //on a finit d'enlever le triplet dans le carr� !
@@ -691,7 +693,7 @@ bool Carte::calculerDoublet(){
     for(int j(0);j<9;++j){ //dans la ligne j
         vector<Cellule*> vecDoublet (0);
         for(int i(0);i<9;++i)
-            if(this->m_liste_cellules[i][j].m_taille == 2)   //on regarde les cellules de taille 2
+            if(m_liste_cellules[i][j].m_taille == 2)   //on regarde les cellules de taille 2
                 vecDoublet.push_back(&m_liste_cellules[i][j]);//on les range dans le vector
 
         for(int k1(1);k1<vecDoublet.size();++k1)
@@ -712,11 +714,11 @@ bool Carte::calculerDoublet(){
                 for(int i(0);i<9;++i){ //si k1,k2 est un doublet
                     if((i==vecDoublet[k1]->m_x)||(i==vecDoublet[k2]->m_x)) //dans les autres cases
                         continue;
-                    if(this->m_liste_cellules[i][j].m_listeNum[valDoublet[0]-1])
-                        if(!this->setOff(i,j,valDoublet[0]))
+                    if(m_liste_cellules[i][j].m_listeNum[valDoublet[0]-1])
+                        if(!setOff(i,j,valDoublet[0]))
                             return false;
-                    if(this->m_liste_cellules[i][j].m_listeNum[valDoublet[1]-1])
-                        if (!this->setOff(i,j,valDoublet[1]))
+                    if(m_liste_cellules[i][j].m_listeNum[valDoublet[1]-1])
+                        if (!setOff(i,j,valDoublet[1]))
                             return false;
                 }
             }
@@ -725,7 +727,7 @@ bool Carte::calculerDoublet(){
     for(int i(0);i<9;++i){ //dans la colonne i
         vector<Cellule*> vecDoublet (0);
         for(int j(0);j<9;++j)
-            if(this->m_liste_cellules[i][j].m_taille == 2)   //on regarde les cellules de taille 2
+            if(m_liste_cellules[i][j].m_taille == 2)   //on regarde les cellules de taille 2
                 vecDoublet.push_back(& m_liste_cellules[i][j]);//on les range dans le vector
 
         for(int k1(1);k1<vecDoublet.size();++k1)
@@ -746,11 +748,11 @@ bool Carte::calculerDoublet(){
                 for(int j(0);j<9;++j){
                     if((j==vecDoublet[k1]->m_y)||(j==vecDoublet[k2]->m_y)) //dans les autres cases
                         continue;
-                    if(this->m_liste_cellules[i][j].m_listeNum[valDoublet[0]-1])
-                        if(!this->setOff(i,j,valDoublet[0]))
+                    if(m_liste_cellules[i][j].m_listeNum[valDoublet[0]-1])
+                        if(!setOff(i,j,valDoublet[0]))
                             return false;
-                    if(this->m_liste_cellules[i][j].m_listeNum[valDoublet[1]-1])
-                        if (!this->setOff(i,j,valDoublet[1]))
+                    if(m_liste_cellules[i][j].m_listeNum[valDoublet[1]-1])
+                        if (!setOff(i,j,valDoublet[1]))
                             return false;
                 }
             }
@@ -759,7 +761,7 @@ bool Carte::calculerDoublet(){
     for(int c(0);c<9;++c){ //dans le carr� c
         vector<Cellule*> vecDoublet (0);
         for(int k(0);k<9;++k)
-            if(this->m_liste_cellules[(c%3)*3+(k%3)][3*(c/3)+k/3].m_taille == 2)   //on regarde les cellules de taille 2
+            if(m_liste_cellules[(c%3)*3+(k%3)][3*(c/3)+k/3].m_taille == 2)   //on regarde les cellules de taille 2
                 vecDoublet.push_back(& m_liste_cellules[(c%3)*3+(k%3)][3*(c/3)+k/3]);//on les range dans le vector
 
         for(int k1(1);k1<vecDoublet.size();++k1)
@@ -782,11 +784,11 @@ bool Carte::calculerDoublet(){
                         continue;
                     if(k==(vecDoublet[k2]->m_x%3)+3*(vecDoublet[k2]->m_y%3))    //si k ne tombe pas sur un un doublet ...
                         continue;
-                    if(this->m_liste_cellules[(c%3)*3+(k%3)][(c/3)*3+(k/3)].m_listeNum[valDoublet[0]-1])
-                        if(!this->setOff((c%3)*3+(k%3),(c/3)*3+(k/3),valDoublet[0]))
+                    if(m_liste_cellules[(c%3)*3+(k%3)][(c/3)*3+(k/3)].m_listeNum[valDoublet[0]-1])
+                        if(!setOff((c%3)*3+(k%3),(c/3)*3+(k/3),valDoublet[0]))
                             return false;
-                    if(this->m_liste_cellules[(c%3)*3+(k%3)][(c/3)*3+(k/3)].m_listeNum[valDoublet[1]-1])
-                        if (!this->setOff((c%3)*3+(k%3),(c/3)*3+(k/3),valDoublet[1]))
+                    if(m_liste_cellules[(c%3)*3+(k%3)][(c/3)*3+(k/3)].m_listeNum[valDoublet[1]-1])
+                        if (!setOff((c%3)*3+(k%3),(c/3)*3+(k/3),valDoublet[1]))
                             return false;
                 }
             }
@@ -797,19 +799,19 @@ bool Carte::calculerDoublet(){
 
 bool Carte::faireCalculer(){
     do{
-        this->m_modifie=false;
-        if (! this->calculerSi())
+        m_modifie=false;
+        if (! calculerSi())
             return false;
-        if(!this->calculerDoublet())
+        if(!calculerDoublet())
             return false;
-//        if(!this->calculerTriplet()){
+//        if(!calculerTriplet()){
 //            cout<<"bug triplet"<<endl;
 //            return false;
 //        }
-        if(!this->calculerTriplet())
+        if(!calculerTriplet())
             return false;
-        //this->forcerCalcul();
-    } while (this->m_modifie);
+        //forcerCalcul();
+    } while (m_modifie);
     return true;
 }
 
@@ -819,8 +821,10 @@ string Carte::getStringVal() const
     string s("");
     for (int j(0); j<9; ++j)
     {
-        for(int i(0); i<9; ++i)
+        for(int i(0); i<9; ++i){
             s+=std::to_string(m_liste_cellules[i][j].m_valeur);
+            s+=" ";
+        }
         s+="\n";
     }
     s+="\n";
@@ -849,31 +853,31 @@ ostream& operator<<(ostream &flux, Test const& test ){
 
 Carte::Carte(Carte const& carte) //constructeur de copie ! utilis� par Essai !
 {
-    this->m_liste_cellules.resize(9,vector<Cellule>(9));
+    m_liste_cellules.resize(9,vector<Cellule>(9));
     //cout<<"ok"<<endl;
     for(int i(0); i<9; ++i)
         for(int j(0); j<9; ++j)
-            //this->m_cellules[i][j];
-            this->m_liste_cellules[i][j]=Cellule(carte.m_liste_cellules[i][j],this);
+            //m_cellules[i][j];
+            m_liste_cellules[i][j]=Cellule(carte.m_liste_cellules[i][j],this);
 
     //cout<<"allocation tab"<<endl;
 
-    this->m_liste_lignes.resize(9);
+    m_liste_lignes.resize(9);
     for(int i(0); i<9;++i)
-        this->m_liste_lignes[i]=Ligne(carte.m_liste_lignes[i],this);
+        m_liste_lignes[i]=Ligne(carte.m_liste_lignes[i],this);
     //cout<<"allocation ligne"<<endl;
 
-    this->m_liste_colonnes.resize(9);
+    m_liste_colonnes.resize(9);
     for(int i(0); i<9;++i)
-        this->m_liste_colonnes[i]=Colonne(carte.m_liste_colonnes[i],this);
+        m_liste_colonnes[i]=Colonne(carte.m_liste_colonnes[i],this);
 
     //cout<<"allocation colonne"<<endl;
 
-    this->m_liste_carres.resize(9);
+    m_liste_carres.resize(9);
     for(int i(0); i<9;++i)
-        this->m_liste_carres[i]=Carre(carte.m_liste_carres[i],this);
+        m_liste_carres[i]=Carre(carte.m_liste_carres[i],this);
 
-    this->m_modifie = false;
+    m_modifie = false;
     //cout<<"allocation carr�s"<<endl;
 
     //cout<<"copier : ok"<<endl;
@@ -905,23 +909,23 @@ Test::Test(){}
 
 bool Essai::tester(int x,int y,int val){
     //cout<<"tester :"<<x<<","<<y<<","<<val<<endl;
-    this->m_x=x;
-    this->m_y=y;
-    this->m_val=val;
-    this->m_erreur=true;
+    m_x=x;
+    m_y=y;
+    m_val=val;
+    m_erreur=true;
 
-    if(! this->m_liste_cellules[x][y].m_listeNum[val-1]){
-        this->m_erreur = false;
+    if(! m_liste_cellules[x][y].m_listeNum[val-1]){
+        m_erreur = false;
         return false;
     }
-    if (! (this->setValeur(x,y,val))){ //Essaie dans la copie TEST
+    if (! (setValeur(x,y,val))){ //Essaie dans la copie TEST
         //cout<<"test faux"<<endl;
-        this->m_erreur =false; //renvoit que la combinaison est impossible
+        m_erreur =false; //renvoit que la combinaison est impossible
         return false;
     }
-    if ( ! (this->faireCalculer())){
+    if ( ! (faireCalculer())){
         //cout<<"test faux"<<endl;
-        this->m_erreur =false; //idem : combinaison impossible
+        m_erreur =false; //idem : combinaison impossible
         return false;
     }
 
@@ -933,27 +937,27 @@ bool Essai::tester(int x,int y,int val){
 bool Essai::enlever(int x,int y,int val){ //retourne faux si probleme dans la carte de base : vrai contradiction du jeu
                                             //si contradiction locale, on l'enleve avec cette m�me fonction ...
     //cout<<"enlever :"<<x<<","<<y<<","<<val<<endl;
-    if ( ! this->setOff(x,y,val) ){ //on l'enleve de la carte principale ..
+    if ( ! setOff(x,y,val) ){ //on l'enleve de la carte principale ..
         cout<<"probleme carte principale"<<endl;//si contradiction
         return false;
     }
-    if(! this->faireCalculer()){
+    if(! faireCalculer()){
         cout<<"probleme carte principale"<<endl;
         return false;
     }
-    for (int i(0);i<this->m_liste_tests.size();++i){ //on parcourt la liste des essais, pour en enlever l'essai faux !
-        if (this->m_liste_tests[i]->m_erreur == true){ //si il n'y a pas d�j� d'erreur ! car on supprime � la fin
-            if (! (this->m_liste_tests[i]->setOff(x,y,val))){ //si le setOff tombe sur une erreur
-                this->m_liste_tests[i]->m_erreur=false; //on l'enleve de la liste
-                if (! (this->enlever(this->m_liste_tests[i]->m_x,this->m_liste_tests[i]->m_y,this->m_liste_tests[i]->m_val))){ //et on calcule !
-                    this->m_erreur = false;
+    for (int i(0);i<m_liste_tests.size();++i){ //on parcourt la liste des essais, pour en enlever l'essai faux !
+        if (m_liste_tests[i]->m_erreur == true){ //si il n'y a pas d�j� d'erreur ! car on supprime � la fin
+            if (! (m_liste_tests[i]->setOff(x,y,val))){ //si le setOff tombe sur une erreur
+                m_liste_tests[i]->m_erreur=false; //on l'enleve de la liste
+                if (! (enlever(m_liste_tests[i]->m_x,m_liste_tests[i]->m_y,m_liste_tests[i]->m_val))){ //et on calcule !
+                    m_erreur = false;
                     return false;
                 }
             }
-            else if(!(this->m_liste_tests[i]->faireCalculer())){
-                this->m_liste_tests[i]->m_erreur=false; //on l'enleve de la liste
-                if (! (this->enlever(this->m_liste_tests[i]->m_x,this->m_liste_tests[i]->m_y,this->m_liste_tests[i]->m_val))){ //et on calcule !
-                    this->m_erreur = false;
+            else if(!(m_liste_tests[i]->faireCalculer())){
+                m_liste_tests[i]->m_erreur=false; //on l'enleve de la liste
+                if (! (enlever(m_liste_tests[i]->m_x,m_liste_tests[i]->m_y,m_liste_tests[i]->m_val))){ //et on calcule !
+                    m_erreur = false;
                     return false;
                 }
             }
@@ -967,37 +971,24 @@ bool Essai::enlever(int x,int y,int val){ //retourne faux si probleme dans la ca
 
 void Essai::nettoyerListe(){
     int i(0); //on retire les elements morts ...
-    while(i < this->m_liste_tests.size()){ //tant qu'on n'est pas hors de la liste !
-        if (! this->m_liste_tests[i]->m_erreur) { //� retirer !
-            delete this->m_liste_tests[i]; //destructeur ...
-            this->m_liste_tests.erase(this->m_liste_tests.begin()+i); //mise a jour de la liste
+    while(i < m_liste_tests.size()){ //tant qu'on n'est pas hors de la liste !
+        if (! m_liste_tests[i]->m_erreur) { //� retirer !
+            delete m_liste_tests[i]; //destructeur ...
+            m_liste_tests.erase(m_liste_tests.begin()+i); //mise a jour de la liste
         }
         else ++i; //ou incrementer
     }
 
         //si l'hypoth�se est d�j� v�rifi�e dans la carte de base (carte m�re) : on enl�ve l'hypoth�se !
     i=0;
-    while(i<this->m_liste_tests.size()){
-        if (this->m_liste_cellules[this->m_liste_tests[i]->m_x][this->m_liste_tests[i]->m_y].m_valeur == this->m_liste_tests[i]->m_val){
-            delete this->m_liste_tests[i];
-            this->m_liste_tests.erase(this->m_liste_tests.begin()+i);
+    while(i<m_liste_tests.size()){
+        if (m_liste_cellules[m_liste_tests[i]->m_x][m_liste_tests[i]->m_y].m_valeur == m_liste_tests[i]->m_val){
+            delete m_liste_tests[i];
+            m_liste_tests.erase(m_liste_tests.begin()+i);
         }
         else ++i;
     }
 
-    //si l'hypoth�se A=>B et l'hypoth�se B=>A : alors on enl�ve l'une des deux ! nettoie efficacement :-)
-    for(int i(0);i<this->m_liste_tests.size();++i){
-        int j = i+1;
-        while(j<this->m_liste_tests.size()){
-            if ((this->m_liste_tests[i]->m_liste_cellules[this->m_liste_tests[j]->m_x][this->m_liste_tests[j]->m_y].m_valeur == this->m_liste_tests[j]->m_val)&&
-                    (this->m_liste_tests[j]->m_liste_cellules[this->m_liste_tests[i]->m_x][this->m_liste_tests[i]->m_y].m_valeur == this->m_liste_tests[i]->m_val)){
-//                cout<<"carte doublon"<<endl<<*this->m_liste_tests[i]<<endl<<*this->m_liste_tests[j]<<endl<<endl;
-                delete this->m_liste_tests[j];
-                this->m_liste_tests.erase(this->m_liste_tests.begin()+j);
-            }
-            else ++j;
-        }
-    }
 }
 
 bool Essai::ajouterTest(int x,int y,int val){
@@ -1006,81 +997,96 @@ bool Essai::ajouterTest(int x,int y,int val){
 
     Essai* ajout = new Essai(*this);
     ajout->m_mere=this;
-    this->m_liste_tests.push_back(ajout);
+    m_liste_tests.push_back(ajout);
 
 
-    if (! (this->m_liste_tests[this->m_liste_tests.size()-1]->tester(x,y,val)) ){ //si interdit : � modifier .... si true il est gard�, sinon on retirer (enlever)
-        this->m_liste_tests[this->m_liste_tests.size()-1]->m_erreur = false;
-        if ( ! this->enlever(x,y,val)) //on enleve (x,y,val), et r�cursivement ...
+    if (! (m_liste_tests[m_liste_tests.size()-1]->tester(x,y,val)) ){ //si interdit : � modifier .... si true il est gard�, sinon on retirer (enlever)
+        m_liste_tests[m_liste_tests.size()-1]->m_erreur = false;
+        if ( ! enlever(x,y,val)) //on enleve (x,y,val), et r�cursivement ...
             return false; //si faux : c'est que la Carte elle-m�me est fausse !
 
                             //une fois tous les "enlever" termin�s, on nettoie
-        this->nettoyerListe();
+        nettoyerListe();
     }
 
     return true; //n'est faux que si la CARTE est _strictement_ impossible !
 }
 
 Essai::Essai(string string_sudoku) : Test(string_sudoku){
-    this->m_liste_tests.reserve(81*sizeof(Test*));
-    this->m_liste_tests.resize(0);
-    this->m_erreur=true; //pas d'erreur globale
-    this->m_solution=NULL;
-    this->m_mere=NULL;
+    m_liste_tests.reserve(81*sizeof(Test*));
+    m_liste_tests.resize(0);
+    m_erreur=true; //pas d'erreur globale
+    m_solution=NULL;
+    m_mere=NULL;
 //    cout<<"construction Essai r�ussie ..."<<endl;
 }
 
 bool Essai::iterer(){ //ajouter les essais ! tous
-    this->m_erreur = true;
+    m_erreur = true;
     for(int i(0);i<9;++i)
         for(int j(0);j<9;++j)
             for(int val(1);val<=9;++val)
-                if (this->m_liste_cellules[i][j].m_listeNum[val-1])
-                    if (this->m_liste_cellules[i][j].m_taille > 1){
+                if (m_liste_cellules[i][j].m_listeNum[val-1])
+                    if (m_liste_cellules[i][j].m_taille > 1){
 //                        cout<<"iterer :"<<i<<","<<j<<","<<val<<"; "<<endl;
-                        if (! this->ajouterTest(i,j,val)){ //probleme carte principale
-                            this->m_erreur = false;
+                        if (! ajouterTest(i,j,val)){ //probleme carte principale
+                            m_erreur = false;
 //                            cout<<"erreur carte iterer"<<endl;
-                            for(int i(0);i< this->m_liste_tests.size(); ++i)
-                                if (this->m_liste_tests[i]){
-                                    delete this->m_liste_tests[i];
-                                    this->m_liste_tests[i]=NULL;
+                            for(int i(0);i< m_liste_tests.size(); ++i)
+                                if (m_liste_tests[i]){
+                                    delete m_liste_tests[i];
+                                    m_liste_tests[i]=NULL;
                                 }
-                            this->m_liste_tests.clear();
+                            m_liste_tests.clear();
                             return false;
                         }
                     }
     cout<<"fin du calcul !"<<endl;
 
-    this->nettoyerListe();
+    nettoyerListe();
+
+    //si l'hypoth�se A=>B et l'hypoth�se B=>A : alors on enl�ve l'une des deux ! nettoie efficacement :-)
+    for(int i(0);i<m_liste_tests.size();++i){
+        int j = i+1;
+        while(j<m_liste_tests.size()){
+            if ((m_liste_tests[i]->m_liste_cellules[m_liste_tests[j]->m_x][m_liste_tests[j]->m_y].m_valeur == m_liste_tests[j]->m_val)&&
+                    (m_liste_tests[j]->m_liste_cellules[m_liste_tests[i]->m_x][m_liste_tests[i]->m_y].m_valeur == m_liste_tests[i]->m_val)){
+//                cout<<"carte doublon"<<endl<<*m_liste_tests[i]<<endl<<*m_liste_tests[j]<<endl<<endl;
+                delete m_liste_tests[j];
+                m_liste_tests.erase(m_liste_tests.begin()+j);
+            }
+            else ++j;
+        }
+    }
+
 
     return true;
 
 }
 
 Essai::~Essai(){
-    for(int i(0);i< this->m_liste_tests.size(); ++i)
-        if (this->m_liste_tests[i]){
-            delete this->m_liste_tests[i];
-            this->m_liste_tests[i]=NULL;
+    for(int i(0);i< m_liste_tests.size(); ++i)
+        if (m_liste_tests[i]){
+            delete m_liste_tests[i];
+            m_liste_tests[i]=NULL;
         }
     //destruction recursive
 }
 
 bool Essai::niveauDeux(){
-    if (! this->iterer())
+    if (! iterer())
         return false;
-    cout<<"taille liste niveau deux : "<<this->m_liste_tests.size()<<endl;
+    cout<<"taille liste niveau deux : "<<m_liste_tests.size()<<endl;
     int i(0);
-    while(i<this->m_liste_tests.size()){
-        if(! this->m_liste_tests[i]->iterer()){ //si probleme dans l'it�ration : enlever, et donc aussi nettoyer !
-            if(! this->enlever(this->m_liste_tests[i]->m_x,this->m_liste_tests[i]->m_y,this->m_liste_tests[i]->m_val)){ //enleve dans la carte principale ET dans toute la liste
-                this->m_erreur = false; //erreur de la carte principale
+    while(i<m_liste_tests.size()){
+        if(! m_liste_tests[i]->iterer()){ //si probleme dans l'it�ration : enlever, et donc aussi nettoyer !
+            if(! enlever(m_liste_tests[i]->m_x,m_liste_tests[i]->m_y,m_liste_tests[i]->m_val)){ //enleve dans la carte principale ET dans toute la liste
+                m_erreur = false; //erreur de la carte principale
                 return false;
             }
-            this->nettoyerListe();
-            delete this->m_liste_tests[i];
-            this->m_liste_tests.erase(this->m_liste_tests.begin()+i);
+            nettoyerListe();
+            delete m_liste_tests[i];
+            m_liste_tests.erase(m_liste_tests.begin()+i);
         }
         else ++i;
     }
@@ -1089,8 +1095,8 @@ bool Essai::niveauDeux(){
 
 int Essai::nombrePossible(){
     vector<vector<int>> cartePossible(9,vector<int>(9,0));
-    for(int i(0);i<this->m_liste_tests.size();++i)
-        cartePossible[this->m_liste_tests[i]->m_x][this->m_liste_tests[i]->m_y]+=1;
+    for(int i(0);i<m_liste_tests.size();++i)
+        cartePossible[m_liste_tests[i]->m_x][m_liste_tests[i]->m_y]+=1;
     for(int i(0);i<9;++i)
         for(int j(0);j<9;++j)
             if(cartePossible[i][j] == 0)
@@ -1123,43 +1129,43 @@ void melangerListe(vector<Essai*>& mon_vecteur){
 }
 
 bool Essai::generer(){ //return true si trouv�, false si erreur : alors on boucle
-    cout<<"taille "<<this->m_liste_tests.size()<<endl;
-    this->m_solution=NULL;
-    this->m_erreur =true;
-    if(this->m_liste_tests.size()==0){
-        if (! this->iterer()){ //si probleme dans la carte this
+    cout<<"taille "<<m_liste_tests.size()<<endl;
+    m_solution=NULL;
+    m_erreur =true;
+    if(m_liste_tests.size()==0){
+        if (! iterer()){ //si probleme dans la carte this
     //        cout<<" probleme iterer";
-            this->m_erreur =false;
+            m_erreur =false;
             return false;
         }
     }
-    if(this->m_liste_tests.size() == 0) //si on a trouv� un unique essai ! fin de la pile
+    if(m_liste_tests.size() == 0) //si on a trouv� un unique essai ! fin de la pile
         return true;
-//    cout<<"taille "<<this->m_liste_tests.size()<<endl;
-    melangerListe(this->m_liste_tests); //on insere de l'al�atoire
-    while(this->m_liste_tests.size()>0){
-    //for(int i(0);i<this->m_liste_tests.size();++i){ //on parcourt les essais qu'on a it�r�s
-        if (this->m_liste_tests[0]->generer()){ //si on a trouv� ! on sauvegarde le chemin
-            this->m_solution=this->m_liste_tests[0];
+//    cout<<"taille "<<m_liste_tests.size()<<endl;
+    melangerListe(m_liste_tests); //on insere de l'al�atoire
+    while(m_liste_tests.size()>0){
+    //for(int i(0);i<m_liste_tests.size();++i){ //on parcourt les essais qu'on a it�r�s
+        if (m_liste_tests[0]->generer()){ //si on a trouv� ! on sauvegarde le chemin
+            m_solution=m_liste_tests[0];
             return true; //et on dit qu'on a trouv�
         }
         else{
-            delete this->m_liste_tests[0];
-            this->m_liste_tests.erase(this->m_liste_tests.begin());
+            delete m_liste_tests[0];
+            m_liste_tests.erase(m_liste_tests.begin());
         }
     }
 
-    this->m_erreur = false;
+    m_erreur = false;
     return false; //si aucun de valides ...
 }
 
 int Essai::getSolution(vector<vector<int>>& tableau){
-    if (this->m_mere)
-        if(tableau[this->m_x][this->m_y]==0)
-            tableau[this->m_x][this->m_y]=this->m_val;
-//    cout<<this->m_x<<","<<this->m_y<<","<<this->m_val<<";"<<endl;
-    if(this->m_solution)
-        return 1+this->m_solution->getSolution(tableau);
+    if (m_mere)
+        if(tableau[m_x][m_y]==0)
+            tableau[m_x][m_y]=m_val;
+//    cout<<m_x<<","<<m_y<<","<<m_val<<";"<<endl;
+    if(m_solution)
+        return 1+m_solution->getSolution(tableau);
     else return 1;
 }
 
