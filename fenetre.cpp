@@ -63,6 +63,7 @@ Fenetre::Fenetre()
     m_texte= texte;
     m_nbrHypotheses=NULL;
     m_profondeur= NULL;
+    m_fenetre_resultat= NULL;
 
     QWidget::connect(ok,SIGNAL(clicked()),this,SLOT(genererSolution()));
 
@@ -80,7 +81,8 @@ Fenetre::~Fenetre()
         delete m_afficherHypothese;
     if (m_nbrHypotheses)
         delete m_nbrHypotheses;
-
+    if (m_fenetre_resultat)
+        delete m_fenetre_resultat;
 
 }
 
@@ -171,27 +173,42 @@ void Fenetre::genererSolution(){
 
     }
 
+    s_iterer = '\n' + s_iterer;
+    s_iterer = '\n' + s_iterer;
+    s_iterer = "premier calcul :" + s_iterer;
     m_afficherCalcul = new QTextEdit;
     m_afficherCalcul->setPlainText(QString::fromStdString(s_iterer));
-    m_afficherCalcul->setWindowTitle("premier calcul");
-    m_afficherCalcul->show();
+    //m_afficherCalcul->setObjectName("premier calcul");
 
+    s_generer = '\n' + s_generer;
+    s_generer = '\n' + s_generer;
+    s_generer = "hypotheses ajoutées :" + s_generer;
     m_afficherHypothese = new QTextEdit;
     m_afficherHypothese->setPlainText(QString::fromStdString(s_generer));
-    m_afficherHypothese->setWindowTitle("hypotheses ajoutées");
-    m_afficherHypothese->show();
+    //m_afficherHypothese->setWindowTitle("hypotheses ajoutées");
 
+    s_solution ='\n' + s_solution;
+    s_solution ='\n' + s_solution;
+    s_solution = "solution avec hypotheses : " + s_solution;
     m_afficherSolution= new QTextEdit;
     m_afficherSolution->setPlainText(QString::fromStdString(s_solution));
-    m_afficherSolution->setWindowTitle("solution calculée");
-    m_afficherSolution->show();
+    //m_afficherSolution->setWindowTitle("solution avec hypotheses");
 
-    m_nbrHypotheses=new QTextEdit;
     string nbrHypoString=to_string(nbrHypo);
+    nbrHypoString = "nombre hypotheses : " + nbrHypoString;
+    m_nbrHypotheses=new QTextEdit;
     m_nbrHypotheses->setPlainText(QString::fromStdString(nbrHypoString));
-    m_nbrHypotheses->setWindowTitle("nombre Hypotheses");
-    m_nbrHypotheses->show();
+    //m_nbrHypotheses->setWindowTitle("nombre Hypotheses :");
 
+    QGridLayout * fenetre2_layout= new QGridLayout;
+    fenetre2_layout->addWidget(m_afficherCalcul,0,0,1,1);
+    fenetre2_layout->addWidget(m_afficherHypothese,0,1,1,1);
+    fenetre2_layout->addWidget(m_afficherSolution,1,0,1,1);
+    fenetre2_layout->addWidget(m_nbrHypotheses,1,1,1,1);
+
+    m_fenetre_resultat = new QWidget;
+    m_fenetre_resultat->setLayout(fenetre2_layout);
+    m_fenetre_resultat->show();
 
 
 }

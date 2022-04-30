@@ -26,6 +26,8 @@ public :
 
     QButtonGroup* m_group;
 
+    QWidget* m_fenetre_resultat;
+
 public:
     Fenetre();
     ~Fenetre();
