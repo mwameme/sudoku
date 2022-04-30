@@ -37,6 +37,8 @@ public :
     Cellule(int num);
     Cellule(Cellule const& cellule, Carte* carte);
 
+    Cellule(Cellule const& cellule);
+
 };
 
 class Ligne{
@@ -95,6 +97,7 @@ public :
 class Carte{
 public :
     bool m_modifie;
+    int m_modification;
     bool m_erreur_carte;
     std::vector<std::vector<Cellule>> m_liste_cellules; //les cellules
 
@@ -117,6 +120,7 @@ public :
     bool calculerDoublet();
     bool calculerTriplet();
     bool faireCalculer();
+
 
     std::string getStringVal() const;
 //    std::string getStringTaille() const;
@@ -158,6 +162,7 @@ public :
     int nombrePossible();
     int getSolution(std::vector<std::vector<int>>& tableau);
 
+
     //part d'une carte, et liste les essais à tester, et itere les calculs !
     //Essai(Carte& carte);
     Essai(std::string string_sudoku);
@@ -166,6 +171,8 @@ public :
     Essai();
     ~Essai();
 
+    bool m_aleatoire;
+
 };
 
 std::ostream& operator<<( std::ostream &flux, Essai const& essai );
@@ -173,6 +180,35 @@ std::ostream& operator<<( std::ostream &flux, Test const& test );
 std::ostream& operator<<( std::ostream &flux, Carte const& carte );
 
 void resoudreGenererTester(std::string adresse);
+
+class comparaison_modification
+{
+public :
+    bool operator()(const Essai* struct1, const Essai* struct2);
+
+};
+
+class Profondeur : public Carte{
+public :
+    Profondeur* m_niveauSup;
+    std::vector<Cellule> m_possible;
+
+    bool m_generation;
+
+    void genererPossible();
+    void melangerPossible();
+    bool essayer();
+    bool boucle();
+
+    int recuperer(std::vector<std::vector<int>>& tableau);
+
+    Profondeur(Profondeur& parent);
+    Profondeur(Carte& carte);
+
+    Profondeur(std::string string_sudoku);
+    ~Profondeur();
+    Profondeur* derniereCarte();
+};
 
 
 

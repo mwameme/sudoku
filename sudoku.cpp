@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include "sudoku.h"
+#include <algorithm>
+//#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -31,6 +33,15 @@ Cellule::Cellule(Cellule const& cellule,Carte* carte){
     m_y=cellule.m_y;
 }
 
+Cellule::Cellule(Cellule const& cellule){
+    m_listeNum=cellule.m_listeNum;
+    m_valeur = cellule.m_valeur;
+    m_taille = cellule.m_taille;
+    m_x=cellule.m_x;
+    m_y=cellule.m_y;
+}
+
+
 bool Cellule::setOff(int num) //enleve num; si taille =1, appeler setValeur. Si possibles =0 return false
 {
     //cout<<"celO";
@@ -38,6 +49,7 @@ bool Cellule::setOff(int num) //enleve num; si taille =1, appeler setValeur. Si 
     {
         m_listeNum[num-1]=false;
         m_carte->m_modifie=true;
+        m_carte->m_modification+=1;
         --(m_taille);
         if (m_taille == 0) return false;
         if (m_taille==1)
@@ -63,6 +75,7 @@ bool Cellule::setValeur(int num)
 
     if (m_taille > 1){
         m_carte->m_modifie = true;
+        m_carte->m_modification += m_taille - 1;
         for(int i(0); i<9; ++i)
             m_listeNum[i]=false;
         m_listeNum[num-1]=true;
@@ -314,6 +327,7 @@ bool Carre::setValeur(int k,int val)
 
 Carte::Carte(string string_sudoku)
 {
+    m_modification=0;
     m_liste_cellules.resize(9,vector<Cellule>(9));
     //cout<<"ok"<<endl;
     for(int i(0); i<9; ++i)
@@ -391,6 +405,8 @@ Carte::Carte(string string_sudoku)
         cout<<*this;
         return;
     }
+
+    m_modification=0;
 
     if (!faireCalculer()){
         m_erreur_carte = false;
@@ -878,6 +894,7 @@ Carte::Carte(Carte const& carte) //constructeur de copie ! utilis� par Essai !
         m_liste_carres[i]=Carre(carte.m_liste_carres[i],this);
 
     m_modifie = false;
+    m_modification = 0;
     //cout<<"allocation carr�s"<<endl;
 
     //cout<<"copier : ok"<<endl;
@@ -899,6 +916,7 @@ Test::Test(Carte const& carte) : Carte(carte) {
 Essai::Essai(Essai const& essai) : Test(essai){
     m_liste_tests.resize(0);
     m_solution=NULL;
+    m_aleatoire = essai.m_aleatoire;
 }
 
 
@@ -938,11 +956,11 @@ bool Essai::enlever(int x,int y,int val){ //retourne faux si probleme dans la ca
                                             //si contradiction locale, on l'enleve avec cette m�me fonction ...
     //cout<<"enlever :"<<x<<","<<y<<","<<val<<endl;
     if ( ! setOff(x,y,val) ){ //on l'enleve de la carte principale ..
-        cout<<"probleme carte principale"<<endl;//si contradiction
+        //cout<<"probleme carte principale"<<endl;//si contradiction
         return false;
     }
     if(! faireCalculer()){
-        cout<<"probleme carte principale"<<endl;
+        //cout<<"probleme carte principale"<<endl;
         return false;
     }
     for (int i(0);i<m_liste_tests.size();++i){ //on parcourt la liste des essais, pour en enlever l'essai faux !
@@ -998,6 +1016,7 @@ bool Essai::ajouterTest(int x,int y,int val){
     Essai* ajout = new Essai(*this);
     ajout->m_mere=this;
     m_liste_tests.push_back(ajout);
+    ajout->m_modification=0;
 
 
     if (! (m_liste_tests[m_liste_tests.size()-1]->tester(x,y,val)) ){ //si interdit : � modifier .... si true il est gard�, sinon on retirer (enlever)
@@ -1028,10 +1047,10 @@ bool Essai::iterer(){ //ajouter les essais ! tous
             for(int val(1);val<=9;++val)
                 if (m_liste_cellules[i][j].m_listeNum[val-1])
                     if (m_liste_cellules[i][j].m_taille > 1){
-//                        cout<<"iterer :"<<i<<","<<j<<","<<val<<"; "<<endl;
+//                        //cout<<"iterer :"<<i<<","<<j<<","<<val<<"; "<<endl;
                         if (! ajouterTest(i,j,val)){ //probleme carte principale
                             m_erreur = false;
-//                            cout<<"erreur carte iterer"<<endl;
+//                            //cout<<"erreur carte iterer"<<endl;
                             for(int i(0);i< m_liste_tests.size(); ++i)
                                 if (m_liste_tests[i]){
                                     delete m_liste_tests[i];
@@ -1041,9 +1060,11 @@ bool Essai::iterer(){ //ajouter les essais ! tous
                             return false;
                         }
                     }
-    cout<<"fin du calcul !"<<endl;
+    //cout<<"fin du calcul !"<<endl;
 
     nettoyerListe();
+
+
 
     //si l'hypoth�se A=>B et l'hypoth�se B=>A : alors on enl�ve l'une des deux ! nettoie efficacement :-)
     for(int i(0);i<m_liste_tests.size();++i){
@@ -1051,7 +1072,7 @@ bool Essai::iterer(){ //ajouter les essais ! tous
         while(j<m_liste_tests.size()){
             if ((m_liste_tests[i]->m_liste_cellules[m_liste_tests[j]->m_x][m_liste_tests[j]->m_y].m_valeur == m_liste_tests[j]->m_val)&&
                     (m_liste_tests[j]->m_liste_cellules[m_liste_tests[i]->m_x][m_liste_tests[i]->m_y].m_valeur == m_liste_tests[i]->m_val)){
-//                cout<<"carte doublon"<<endl<<*m_liste_tests[i]<<endl<<*m_liste_tests[j]<<endl<<endl;
+//                //cout<<"carte doublon"<<endl<<*m_liste_tests[i]<<endl<<*m_liste_tests[j]<<endl<<endl;
                 delete m_liste_tests[j];
                 m_liste_tests.erase(m_liste_tests.begin()+j);
             }
@@ -1059,10 +1080,23 @@ bool Essai::iterer(){ //ajouter les essais ! tous
         }
     }
 
+    //on trie selon le nombre de moficiation de chaque carte
+    if (m_aleatoire == false)
+        std::sort(m_liste_tests.begin(),m_liste_tests.end(),comparaison_modification());
+
+    /*
+    for(int i(0);i<m_liste_tests.size();++i)
+    {
+        cout << m_liste_tests[i]->m_modification << " , ";
+    }
+    cout <<endl << endl;
+*/
+
 
     return true;
 
 }
+
 
 Essai::~Essai(){
     for(int i(0);i< m_liste_tests.size(); ++i)
@@ -1076,8 +1110,10 @@ Essai::~Essai(){
 bool Essai::niveauDeux(){
     if (! iterer())
         return false;
-    cout<<"taille liste niveau deux : "<<m_liste_tests.size()<<endl;
+    //cout<<"taille liste niveau deux : "<<m_liste_tests.size()<<endl;
     int i(0);
+    if (m_aleatoire == false)
+        std::sort(m_liste_tests.begin(),m_liste_tests.end(),comparaison_modification());
     while(i<m_liste_tests.size()){
         if(! m_liste_tests[i]->iterer()){ //si probleme dans l'it�ration : enlever, et donc aussi nettoyer !
             if(! enlever(m_liste_tests[i]->m_x,m_liste_tests[i]->m_y,m_liste_tests[i]->m_val)){ //enleve dans la carte principale ET dans toute la liste
@@ -1129,7 +1165,7 @@ void melangerListe(vector<Essai*>& mon_vecteur){
 }
 
 bool Essai::generer(){ //return true si trouv�, false si erreur : alors on boucle
-    cout<<"taille "<<m_liste_tests.size()<<endl;
+    //cout<<"taille "<<m_liste_tests.size()<<endl;
     m_solution=NULL;
     m_erreur =true;
     if(m_liste_tests.size()==0){
@@ -1142,7 +1178,9 @@ bool Essai::generer(){ //return true si trouv�, false si erreur : alors on bou
     if(m_liste_tests.size() == 0) //si on a trouv� un unique essai ! fin de la pile
         return true;
 //    cout<<"taille "<<m_liste_tests.size()<<endl;
-    melangerListe(m_liste_tests); //on insere de l'al�atoire
+
+    if (m_aleatoire == true)
+        melangerListe(m_liste_tests); //on insere de l'al�atoire
     while(m_liste_tests.size()>0){
     //for(int i(0);i<m_liste_tests.size();++i){ //on parcourt les essais qu'on a it�r�s
         if (m_liste_tests[0]->generer()){ //si on a trouv� ! on sauvegarde le chemin
@@ -1160,6 +1198,7 @@ bool Essai::generer(){ //return true si trouv�, false si erreur : alors on bou
 }
 
 int Essai::getSolution(vector<vector<int>>& tableau){
+    //cout << m_modification << " et " ;
     if (m_mere)
         if(tableau[m_x][m_y]==0)
             tableau[m_x][m_y]=m_val;
@@ -1167,6 +1206,11 @@ int Essai::getSolution(vector<vector<int>>& tableau){
     if(m_solution)
         return 1+m_solution->getSolution(tableau);
     else return 1;
+}
+
+inline bool comparaison_modification::operator() (const Essai* struct1, const Essai* struct2)
+{
+    return (struct1->m_modification > struct2->m_modification);
 }
 
 /*
@@ -1209,3 +1253,147 @@ void resoudreGenererTester(string adresse){
 
 }
 */
+
+Profondeur::Profondeur(Profondeur& parent) : Carte(parent)
+{
+    m_niveauSup=NULL;
+    m_generation = false;
+    m_possible = parent.m_possible;
+    m_possible.erase(m_possible.begin());
+    //melangerPossible();
+}
+
+Profondeur::Profondeur(Carte& carte) : Carte(carte){
+    m_niveauSup=NULL;
+    m_generation = false;
+}
+
+Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
+    m_niveauSup=NULL;
+    m_generation = false;
+//    faireCalculer();
+
+    genererPossible();
+}
+
+void Profondeur::genererPossible(){
+    if (m_generation == true)
+        return ;
+    m_possible.reserve(9*81*sizeof(Cellule));
+    for(int i(0);i<9;++i)
+        for(int j(0);j<9;++j)
+            if (m_liste_cellules[i][j].m_taille > 1)
+                for(int val(1);val<=9;++val)
+
+                    if (m_liste_cellules[i][j].m_listeNum[val-1]){
+                        Cellule temp=m_liste_cellules[i][j];
+                        temp.m_valeur=val;
+                        m_possible.push_back(temp);
+                    }
+    m_generation = true;
+    melangerPossible();
+
+    cout<<m_possible.size()<<" taille "<<endl;
+
+}
+
+void Profondeur::melangerPossible(){
+        vector<int> liste_1(m_possible.size());
+        vector<int> liste_2(m_possible.size());
+        for(int i(0);i<m_possible.size();++i)
+            liste_1[i]=i;
+        for(int i(0);i<m_possible.size();++i){
+            int tirage= rand()% liste_1.size();
+            liste_2[i]=liste_1[tirage];
+            liste_1.erase(liste_1.begin()+tirage);
+        }
+        //ici, liste_1 est vide, et liste_2 m�lang�e
+        vector<Cellule> nouveau(m_possible.size());
+        for(int i(0);i<m_possible.size();++i)
+            nouveau[i]=m_possible[liste_2[i]];
+
+        m_possible=nouveau;
+}
+
+bool Profondeur::essayer(){
+    if (m_possible.size()==0)
+        return false;
+    m_niveauSup = new Profondeur(*this);
+    m_niveauSup->melangerPossible();
+
+    if ( (m_niveauSup->setValeur(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur)) == false){
+        return false;
+    }
+    if ((m_niveauSup->faireCalculer()) ==false)
+        return false;
+    if (m_niveauSup->m_erreur_carte == false)
+        return false;
+    return true;
+}
+
+bool Profondeur::boucle(){
+    a:
+    cout << "taille boucle " << m_possible.size() << endl;
+
+    if ( essayer() == false){ // essayer le m_possible[0]
+        delete m_niveauSup;   // si c'est faux
+        m_niveauSup = NULL;
+        setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
+        m_possible.erase(m_possible.begin());
+        if (m_possible.size()==0)
+            return false;
+        goto a;
+    } // donc la le m_possible[0] est vrai (pour l'instant)
+
+
+    bool complet=true; // on test si il y reste du choix (sinon c'est terminé)
+    for(int i(0);i<9;++i){
+        for(int j(0);j<9;++j){
+            if (m_liste_cellules[i][j].m_valeur ==0){
+                complet=false;
+                break;
+            }
+        }
+        if (complet ==false)
+            break;
+    }
+    if (complet == true) return true; //et alors on retourne le résultat
+
+
+    if (m_niveauSup->boucle() == false){
+        delete m_niveauSup;
+        m_niveauSup = NULL;
+        setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
+        m_possible.erase(m_possible.begin());
+        if (m_possible.size()==0)
+            return false;
+        goto a;
+    }
+    else return true;
+
+}
+
+Profondeur::~Profondeur(){
+    if (m_niveauSup)
+        delete m_niveauSup;
+    m_niveauSup=NULL;
+}
+
+int Profondeur::recuperer(vector<vector<int>>& tableau){
+    tableau[m_possible[0].m_x][m_possible[0].m_y]= m_possible[0].m_valeur;
+    if (m_niveauSup)
+        return m_niveauSup->recuperer(tableau) +1;
+    else return 0;
+
+}
+
+Profondeur* Profondeur::derniereCarte(){
+    if (m_niveauSup == NULL)
+        return this;
+    else return m_niveauSup->derniereCarte();
+
+}
+
+
+
+
