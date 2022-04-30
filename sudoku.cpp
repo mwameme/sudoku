@@ -1276,8 +1276,13 @@ void Profondeur::melangerPossible(){
 }
 
 bool Profondeur::essayer(){
-    if (m_possible.size()==0)
-        return false;
+    if (m_possible.size()==0){
+        for(int i(0);i<9;++i)
+            for(int j(0);j<9;++j)
+                if (m_liste_cellules[i][j].m_valeur ==0)
+                    return false;
+        return true;
+    }
     m_niveauSup = new Profondeur(*this);
     m_niveauSup->melangerPossible();
 
@@ -1295,17 +1300,28 @@ bool Profondeur::boucle(){
     a:
     cout << "taille boucle " << m_possible.size() << endl;
     if (m_possible.size() == 0){
-        if (m_erreur_carte == true)
-            return true;
-        else return false;
+        for(int i(0);i<9;++i)
+            for(int j(0);j<9;++j)
+                if (m_liste_cellules[i][j].m_valeur ==0)
+                    return false;
+        return true;
+
+//        if (m_erreur_carte == true)
+//            return true;
+//        else return false;
     }
     if ( essayer() == false){ // essayer le m_possible[0]
         delete m_niveauSup;   // si c'est faux
         m_niveauSup = NULL;
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
         m_possible.erase(m_possible.begin());
-        if (m_possible.size()==0)
-            return false;
+        if (m_possible.size()==0){
+            for(int i(0);i<9;++i)
+                for(int j(0);j<9;++j)
+                    if (m_liste_cellules[i][j].m_valeur ==0)
+                        return false;
+            return true;
+        }
         goto a;
     } // donc la le m_possible[0] est vrai (pour l'instant)
 
@@ -1329,8 +1345,13 @@ bool Profondeur::boucle(){
         m_niveauSup = NULL;
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
         m_possible.erase(m_possible.begin());
-        if (m_possible.size()==0)
-            return false;
+        if (m_possible.size()==0){
+            for(int i(0);i<9;++i)
+                for(int j(0);j<9;++j)
+                    if (m_liste_cellules[i][j].m_valeur ==0)
+                        return false;
+            return true;
+        }
         goto a;
     }
     else return true;
