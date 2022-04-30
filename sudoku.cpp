@@ -1218,8 +1218,7 @@ Profondeur::Profondeur(Profondeur& parent) : Carte(parent)
 {
     m_niveauSup=NULL;
     m_generation = false;
-    m_possible = parent.m_possible;
-    m_possible.erase(m_possible.begin());
+    //m_possible.erase(m_possible.begin());
     //melangerPossible();
 }
 
@@ -1280,7 +1279,6 @@ bool Profondeur::essayer(){
         return true;
     }
     m_niveauSup = new Profondeur(*this);
-    m_niveauSup->melangerPossible();
 
     if ( (m_niveauSup->setValeur(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur)) == false){
         return false;
@@ -1289,6 +1287,8 @@ bool Profondeur::essayer(){
         return false;
     /*if (m_niveauSup->m_erreur_carte == false)
         return false;*/
+
+    m_niveauSup->genererPossible();
     return true;
 }
 
@@ -1296,6 +1296,10 @@ bool Profondeur::boucle(){
     a:
     cout << "taille boucle " << m_possible.size() << endl;
     if (m_possible.size() == 0){
+        for(int i(0);i<9;++i)
+            for(int j(0);j<9;++j)
+                if (m_liste_cellules[i][j].m_valeur ==0)
+                    return false;
 
         return true;
 
@@ -1340,6 +1344,10 @@ bool Profondeur::boucle(){
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
         m_possible.erase(m_possible.begin());
         if (m_possible.size()==0){
+            for(int i(0);i<9;++i)
+                for(int j(0);j<9;++j)
+                    if (m_liste_cellules[i][j].m_valeur ==0)
+                        return false;
             return true;
         }
 
