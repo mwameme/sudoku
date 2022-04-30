@@ -28,6 +28,7 @@ public :
 
     QWidget* m_fenetre_resultat;
 
+    bool m_erreur_carte;
 public:
     Fenetre();
     ~Fenetre();

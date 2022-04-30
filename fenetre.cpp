@@ -33,9 +33,9 @@ Fenetre::Fenetre()
 
     m_group = new QButtonGroup;
     m_group->setExclusive(true);
-    QCheckBox* checkbox1= new QCheckBox("niveau un aléatoire");
-    QCheckBox* checkbox2 = new QCheckBox("niveau un minimum");
-    QCheckBox* checkbox3 = new QCheckBox("profondeur aléatoire");
+    QCheckBox* checkbox1 = new QCheckBox("niveau un : aléatoire");
+    QCheckBox* checkbox2 = new QCheckBox("niveau un : minimum");
+    QCheckBox* checkbox3 = new QCheckBox("profondeur : aléatoire");
     m_group->addButton(checkbox1,1);
     m_group->addButton(checkbox2,0);
     m_group->addButton(checkbox3,2);
@@ -99,19 +99,22 @@ void Fenetre::genererSolution(){
     if (m_afficherHypothese)
         delete m_afficherHypothese;
 
+    m_erreur_carte = true;
+
     string s_iterer, s_generer, s_solution;
     int nbrHypo;
     cout << m_group->checkedId() <<" choix "<<endl;
     if (m_group->checkedId() <=1){
         m_sudoku=new Essai(texte_sudoku);
+//        m_erreur_carte = m_sudoku->m_erreur_carte;
 
         m_sudoku->m_aleatoire = m_group->checkedId();
         cout << m_sudoku->m_aleatoire<<" aleatoire "<<endl;
 
-        m_sudoku->iterer();
+        m_erreur_carte = m_sudoku->iterer();
         s_iterer = m_sudoku->getStringVal();
 
-        m_sudoku->generer();
+        m_erreur_carte = m_sudoku->generer();
         vector<vector<int>> tableau(9,vector<int> (9,0));
         /*for(int i(0);i<9;++i)
             for(int j(0);j<9;++j)
@@ -151,7 +154,7 @@ void Fenetre::genererSolution(){
 
         s_iterer=m_profondeur->getStringVal();
 
-        m_profondeur->boucle();
+        m_erreur_carte = m_profondeur->boucle();
 
         vector<vector<int>> hypotheses(9,vector<int> (9,0));
         nbrHypo = m_profondeur->recuperer(hypotheses);
@@ -195,7 +198,13 @@ void Fenetre::genererSolution(){
     //m_afficherSolution->setWindowTitle("solution avec hypotheses");
 
     string nbrHypoString=to_string(nbrHypo);
-    nbrHypoString = "nombre hypotheses : " + nbrHypoString;
+    nbrHypoString = "nombre d'hypotheses supplémentaires : " + nbrHypoString;
+    nbrHypoString = nbrHypoString + '\n';
+    if (m_erreur_carte == true)
+        nbrHypoString = nbrHypoString + "pas d'erreur dans la donnée de la carte";
+    else
+        nbrHypoString = nbrHypoString + "erreur dans la donnée de la carte";
+
     m_nbrHypotheses=new QTextEdit;
     m_nbrHypotheses->setPlainText(QString::fromStdString(nbrHypoString));
     //m_nbrHypotheses->setWindowTitle("nombre Hypotheses :");
@@ -208,6 +217,7 @@ void Fenetre::genererSolution(){
 
     m_fenetre_resultat = new QWidget;
     m_fenetre_resultat->setLayout(fenetre2_layout);
+    m_fenetre_resultat->setWindowTitle("résolution");
     m_fenetre_resultat->show();
 
 

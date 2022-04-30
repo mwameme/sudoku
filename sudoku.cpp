@@ -1213,46 +1213,6 @@ inline bool comparaison_modification::operator() (const Essai* struct1, const Es
     return (struct1->m_modification > struct2->m_modification);
 }
 
-/*
-void resoudreGenererTester(string adresse){
-
-    Essai monSudoku(adresse);
-    monSudoku.iterer();
-    cout<<"resolution sudoku"<<endl;
-    cout<<monSudoku<<endl;
-
-    //generer le sudoku r�ponse;
-    monSudoku.generer();
-    //Recuperer le sudoku g�n�r�
-    vector<vector<int>> tableau(9,vector<int> (9,0));
-    for(int i(0);i<9;++i)
-        for(int j(0);j<9;++j)
-            tableau[i][j]=monSudoku.m_liste_cellules[i][j].m_valeur;
-
-    int compteur = monSudoku.getSolution(tableau);
-    cout<<"nombre de valeurs ajout�es : "<<compteur<<endl;
-    cout<<"afficher g�n�r� :"<<endl;
-    for(int j(0);j<9;++j){
-        for(int i(0);i<9;++i)
-            cout<<tableau[i][j];
-        cout<<endl;
-    }
-
-    ofstream ecrireFichier("C:/Users/33658/OneDrive/Documents/projets/sudoku/test genere.txt");
-    for(int j(0);j<9;++j){
-        for(int i(0);i<9;++i)
-            ecrireFichier<<tableau[i][j];
-        ecrireFichier<<'\n';
-    }
-    ecrireFichier.close();
-
-    cout<<"r�soudre le g�n�r�"<<endl;
-    Essai monSudokuTest("C:/Users/33658/OneDrive/Documents/projets/sudoku/test genere.txt");
-    monSudokuTest.iterer();
-    cout<<monSudokuTest<<endl;
-
-}
-*/
 
 Profondeur::Profondeur(Profondeur& parent) : Carte(parent)
 {
@@ -1298,21 +1258,21 @@ void Profondeur::genererPossible(){
 }
 
 void Profondeur::melangerPossible(){
-        vector<int> liste_1(m_possible.size());
-        vector<int> liste_2(m_possible.size());
-        for(int i(0);i<m_possible.size();++i)
-            liste_1[i]=i;
-        for(int i(0);i<m_possible.size();++i){
-            int tirage= rand()% liste_1.size();
-            liste_2[i]=liste_1[tirage];
-            liste_1.erase(liste_1.begin()+tirage);
-        }
-        //ici, liste_1 est vide, et liste_2 m�lang�e
-        vector<Cellule> nouveau(m_possible.size());
-        for(int i(0);i<m_possible.size();++i)
-            nouveau[i]=m_possible[liste_2[i]];
+    vector<int> liste_1(m_possible.size());
+    vector<int> liste_2(m_possible.size());
+    for(int i(0);i<m_possible.size();++i)
+        liste_1[i]=i;
+    for(int i(0);i<m_possible.size();++i){
+        int tirage= rand()% liste_1.size();
+        liste_2[i]=liste_1[tirage];
+        liste_1.erase(liste_1.begin()+tirage);
+    }
+    //ici, liste_1 est vide, et liste_2 m�lang�e
+    vector<Cellule> nouveau(m_possible.size());
+    for(int i(0);i<m_possible.size();++i)
+        nouveau[i]=m_possible[liste_2[i]];
 
-        m_possible=nouveau;
+    m_possible=nouveau;
 }
 
 bool Profondeur::essayer(){
@@ -1334,7 +1294,11 @@ bool Profondeur::essayer(){
 bool Profondeur::boucle(){
     a:
     cout << "taille boucle " << m_possible.size() << endl;
-
+    if (m_possible.size() == 0){
+        if (m_erreur_carte == true)
+            return true;
+        else return false;
+    }
     if ( essayer() == false){ // essayer le m_possible[0]
         delete m_niveauSup;   // si c'est faux
         m_niveauSup = NULL;
