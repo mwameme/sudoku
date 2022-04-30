@@ -1297,11 +1297,6 @@ bool Profondeur::boucle(){
     cout << "taille boucle " << m_possible.size() << endl;
     if (m_possible.size() == 0){
 
-        for(int i(0);i<9;++i)
-            for(int j(0);j<9;++j)
-                if (m_liste_cellules[i][j].m_valeur == 0)
-                    return false;
-
         return true;
 
 //        if (m_erreur_carte == true)
@@ -1345,11 +1340,6 @@ bool Profondeur::boucle(){
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
         m_possible.erase(m_possible.begin());
         if (m_possible.size()==0){
-            for(int i(0);i<9;++i)
-                for(int j(0);j<9;++j)
-                    if (m_liste_cellules[i][j].m_valeur == 0)
-                        return false;
-
             return true;
         }
 
