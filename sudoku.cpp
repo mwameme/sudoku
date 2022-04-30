@@ -1312,14 +1312,7 @@ bool Profondeur::boucle(){
         m_niveauSup = NULL;
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
         m_possible.erase(m_possible.begin());
-        if (m_possible.size()==0){
-            for(int i(0);i<9;++i)
-                for(int j(0);j<9;++j)
-                    if (m_liste_cellules[i][j].m_valeur ==0)
-                        return false;
 
-            return true;
-        }
         goto a;
     } // donc la le m_possible[0] est vrai (pour l'instant)
 
@@ -1343,13 +1336,14 @@ bool Profondeur::boucle(){
         m_niveauSup = NULL;
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
         m_possible.erase(m_possible.begin());
-        if (m_possible.size()==0){
+/*        if (m_possible.size()==0){
             for(int i(0);i<9;++i)
                 for(int j(0);j<9;++j)
                     if (m_liste_cellules[i][j].m_valeur ==0)
                         return false;
             return true;
-        }
+        }*/
+
 
         complet=true; // on test si il y reste du choix (sinon c'est terminé)
         for(int i(0);i<9;++i){
@@ -1363,7 +1357,8 @@ bool Profondeur::boucle(){
                 break;
         }
         if (complet == true) return true; //et alors on retourne le résultat
-
+        if (m_possible.size() == 0)
+            return false;
 
         goto a;
     }

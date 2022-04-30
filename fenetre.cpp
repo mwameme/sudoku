@@ -152,11 +152,14 @@ void Fenetre::genererSolution(){
         m_sudoku = NULL;
         m_profondeur =new Profondeur(texte_sudoku);
 
-
+        m_erreur_carte = m_profondeur->m_erreur_carte;
 
         s_iterer=m_profondeur->getStringVal();
 
-        m_erreur_carte = m_profondeur->boucle();
+        if (m_erreur_carte)
+            m_erreur_carte = m_profondeur->boucle();
+        else
+            m_profondeur->boucle();
 
         vector<vector<int>> hypotheses(9,vector<int> (9,0));
         nbrHypo = m_profondeur->recuperer(hypotheses);
