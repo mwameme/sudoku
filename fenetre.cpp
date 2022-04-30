@@ -152,6 +152,8 @@ void Fenetre::genererSolution(){
         m_sudoku = NULL;
         m_profondeur =new Profondeur(texte_sudoku);
 
+
+
         s_iterer=m_profondeur->getStringVal();
 
         m_erreur_carte = m_profondeur->boucle();

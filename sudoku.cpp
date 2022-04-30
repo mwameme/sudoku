@@ -1277,10 +1277,6 @@ void Profondeur::melangerPossible(){
 
 bool Profondeur::essayer(){
     if (m_possible.size()==0){
-        for(int i(0);i<9;++i)
-            for(int j(0);j<9;++j)
-                if (m_liste_cellules[i][j].m_valeur ==0)
-                    return false;
         return true;
     }
     m_niveauSup = new Profondeur(*this);
@@ -1289,10 +1285,10 @@ bool Profondeur::essayer(){
     if ( (m_niveauSup->setValeur(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur)) == false){
         return false;
     }
-    if ((m_niveauSup->faireCalculer()) ==false)
+    if ((m_niveauSup->faireCalculer()) == false)
         return false;
-    if (m_niveauSup->m_erreur_carte == false)
-        return false;
+    /*if (m_niveauSup->m_erreur_carte == false)
+        return false;*/
     return true;
 }
 
@@ -1300,10 +1296,12 @@ bool Profondeur::boucle(){
     a:
     cout << "taille boucle " << m_possible.size() << endl;
     if (m_possible.size() == 0){
+
         for(int i(0);i<9;++i)
             for(int j(0);j<9;++j)
-                if (m_liste_cellules[i][j].m_valeur ==0)
+                if (m_liste_cellules[i][j].m_valeur == 0)
                     return false;
+
         return true;
 
 //        if (m_erreur_carte == true)
@@ -1320,6 +1318,7 @@ bool Profondeur::boucle(){
                 for(int j(0);j<9;++j)
                     if (m_liste_cellules[i][j].m_valeur ==0)
                         return false;
+
             return true;
         }
         goto a;
@@ -1348,10 +1347,26 @@ bool Profondeur::boucle(){
         if (m_possible.size()==0){
             for(int i(0);i<9;++i)
                 for(int j(0);j<9;++j)
-                    if (m_liste_cellules[i][j].m_valeur ==0)
+                    if (m_liste_cellules[i][j].m_valeur == 0)
                         return false;
+
             return true;
         }
+
+        complet=true; // on test si il y reste du choix (sinon c'est terminé)
+        for(int i(0);i<9;++i){
+            for(int j(0);j<9;++j){
+                if (m_liste_cellules[i][j].m_valeur ==0){
+                    complet=false;
+                    break;
+                }
+            }
+            if (complet ==false)
+                break;
+        }
+        if (complet == true) return true; //et alors on retourne le résultat
+
+
         goto a;
     }
     else return true;
@@ -1381,4 +1396,9 @@ Profondeur* Profondeur::derniereCarte(){
 
 
 
-
+/*
+for(int i(0);i<9;++i)
+    for(int j(0);j<9;++j)
+        if (m_liste_cellules[i][j].m_valeur ==0)
+            return false;
+*/
