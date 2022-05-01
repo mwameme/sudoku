@@ -1236,8 +1236,6 @@ Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
 }
 
 void Profondeur::genererPossible(){
-    if (m_generation == true)
-        return ;
     m_possible.reserve(9*81*sizeof(Cellule));
     for(int i(0);i<9;++i)
         for(int j(0);j<9;++j)
@@ -1249,7 +1247,6 @@ void Profondeur::genererPossible(){
                         temp.m_valeur=val;
                         m_possible.push_back(temp);
                     }
-    m_generation = true;
     melangerPossible();
 
     cout<<m_possible.size()<<" taille "<<endl;
