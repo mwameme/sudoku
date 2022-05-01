@@ -1295,7 +1295,8 @@ bool Profondeur::essayer(){
 bool Profondeur::boucle(){
     a:
     cout << "taille boucle " << m_possible.size() << endl;
-    if (m_possible.size() == 0){
+
+    if (m_possible.size() == 0){ //si la liste est vide : a-t-on trouvé ? Sinon false
         for(int i(0);i<9;++i)
             for(int j(0);j<9;++j)
                 if (m_liste_cellules[i][j].m_valeur ==0)
@@ -1311,60 +1312,28 @@ bool Profondeur::boucle(){
         delete m_niveauSup;   // si c'est faux
         m_niveauSup = NULL;
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
-        m_possible.erase(m_possible.begin());
+        m_possible.clear();
+
+        genererPossible();
 
         goto a;
     } // donc la le m_possible[0] est vrai (pour l'instant)
 
 
-    bool complet=true; // on test si il y reste du choix (sinon c'est terminé)
-    for(int i(0);i<9;++i){
-        for(int j(0);j<9;++j){
-            if (m_liste_cellules[i][j].m_valeur ==0){
-                complet=false;
-                break;
-            }
-        }
-        if (complet ==false)
-            break;
-    }
-    if (complet == true) return true; //et alors on retourne le résultat
-
-
-    if (m_niveauSup->boucle() == false){
+    if (m_niveauSup->boucle() == false){ //au début de l'appel, on teste la  taille du niveauSup :ok
         delete m_niveauSup;
         m_niveauSup = NULL;
         setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
-        m_possible.erase(m_possible.begin());
-/*        if (m_possible.size()==0){
-            for(int i(0);i<9;++i)
-                for(int j(0);j<9;++j)
-                    if (m_liste_cellules[i][j].m_valeur ==0)
-                        return false;
-            return true;
-        }*/
+        m_possible.clear();
+        genererPossible();
 
-
-        complet=true; // on test si il y reste du choix (sinon c'est terminé)
-        for(int i(0);i<9;++i){
-            for(int j(0);j<9;++j){
-                if (m_liste_cellules[i][j].m_valeur ==0){
-                    complet=false;
-                    break;
-                }
-            }
-            if (complet ==false)
-                break;
-        }
-        if (complet == true) return true; //et alors on retourne le résultat
-        if (m_possible.size() == 0)
-            return false;
+        //comme on a modifié la carte (actuelle) on vérifie encore une fois si elle est vrai / ou bien si liste == 0 et donc fausse)
 
         goto a;
     }
     else return true;
 
-}
+} // on remarque qu'on pourrait moins souvent vérifiée si la carte finale est vraie ...
 
 Profondeur::~Profondeur(){
     if (m_niveauSup)
@@ -1388,10 +1357,3 @@ Profondeur* Profondeur::derniereCarte(){
 }
 
 
-
-/*
-for(int i(0);i<9;++i)
-    for(int j(0);j<9;++j)
-        if (m_liste_cellules[i][j].m_valeur ==0)
-            return false;
-*/
