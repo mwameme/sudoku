@@ -191,12 +191,10 @@ public :
 class Profondeur : public Carte{
 public :
     Profondeur* m_niveauSup;
-    std::vector<Cellule> m_possible;
+    Cellule m_possible;
 
-    bool m_generation;
 
-    void genererPossible();
-    void melangerPossible();
+    bool choisirPossible();
     bool essayer();
     bool boucle();
 

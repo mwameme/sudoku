@@ -156,6 +156,8 @@ void Fenetre::genererSolution(){
 
         s_iterer=m_profondeur->getStringVal();
 
+//        m_profondeur->genererPossible();
+
         if (m_erreur_carte)
             m_erreur_carte = m_profondeur->boucle();
         else

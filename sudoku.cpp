@@ -406,7 +406,6 @@ Carte::Carte(string string_sudoku)
         return;
     }
 
-    m_modification=0;
 
     if (!faireCalculer()){
         m_erreur_carte = false;
@@ -869,6 +868,7 @@ ostream& operator<<(ostream &flux, Test const& test ){
 
 Carte::Carte(Carte const& carte) //constructeur de copie ! utilis� par Essai !
 {
+    m_modification = carte.m_modification;
     m_liste_cellules.resize(9,vector<Cellule>(9));
     //cout<<"ok"<<endl;
     for(int i(0); i<9; ++i)
@@ -894,7 +894,7 @@ Carte::Carte(Carte const& carte) //constructeur de copie ! utilis� par Essai !
         m_liste_carres[i]=Carre(carte.m_liste_carres[i],this);
 
     m_modifie = false;
-    m_modification = 0;
+
     //cout<<"allocation carr�s"<<endl;
 
     //cout<<"copier : ok"<<endl;
@@ -1016,7 +1016,6 @@ bool Essai::ajouterTest(int x,int y,int val){
     Essai* ajout = new Essai(*this);
     ajout->m_mere=this;
     m_liste_tests.push_back(ajout);
-    ajout->m_modification=0;
 
 
     if (! (m_liste_tests[m_liste_tests.size()-1]->tester(x,y,val)) ){ //si interdit : � modifier .... si true il est gard�, sinon on retirer (enlever)
@@ -1083,15 +1082,6 @@ bool Essai::iterer(){ //ajouter les essais ! tous
     //on trie selon le nombre de moficiation de chaque carte
     if (m_aleatoire == false)
         std::sort(m_liste_tests.begin(),m_liste_tests.end(),comparaison_modification());
-
-    /*
-    for(int i(0);i<m_liste_tests.size();++i)
-    {
-        cout << m_liste_tests[i]->m_modification << " , ";
-    }
-    cout <<endl << endl;
-*/
-
 
     return true;
 
@@ -1198,11 +1188,10 @@ bool Essai::generer(){ //return true si trouv�, false si erreur : alors on bou
 }
 
 int Essai::getSolution(vector<vector<int>>& tableau){
-    //cout << m_modification << " et " ;
     if (m_mere)
         if(tableau[m_x][m_y]==0)
             tableau[m_x][m_y]=m_val;
-//    cout<<m_x<<","<<m_y<<","<<m_val<<";"<<endl;
+
     if(m_solution)
         return 1+m_solution->getSolution(tableau);
     else return 1;
@@ -1214,123 +1203,121 @@ inline bool comparaison_modification::operator() (const Essai* struct1, const Es
 }
 
 
+
+
+
+
 Profondeur::Profondeur(Profondeur& parent) : Carte(parent)
 {
     m_niveauSup=NULL;
-    m_generation = false;
+    m_modification=parent.m_modification;
     //m_possible.erase(m_possible.begin());
     //melangerPossible();
 }
 
 Profondeur::Profondeur(Carte& carte) : Carte(carte){
     m_niveauSup=NULL;
-    m_generation = false;
+    m_modification = carte.m_modification;
 }
 
 Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
     m_niveauSup=NULL;
-    m_generation = false;
-//    faireCalculer();
-
-    genererPossible();
-}
-
-void Profondeur::genererPossible(){
-    m_possible.reserve(9*81*sizeof(Cellule));
-    for(int i(0);i<9;++i)
-        for(int j(0);j<9;++j)
-            if (m_liste_cellules[i][j].m_taille > 1)
-                for(int val(1);val<=9;++val)
-
-                    if (m_liste_cellules[i][j].m_listeNum[val-1]){
-                        Cellule temp=m_liste_cellules[i][j];
-                        temp.m_valeur=val;
-                        m_possible.push_back(temp);
-                    }
-    melangerPossible();
-
-    cout<<m_possible.size()<<" taille "<<endl;
+    m_possible.m_valeur=0;
+    //    faireCalculer();
 
 }
 
-void Profondeur::melangerPossible(){
-    vector<int> liste_1(m_possible.size());
-    vector<int> liste_2(m_possible.size());
-    for(int i(0);i<m_possible.size();++i)
-        liste_1[i]=i;
-    for(int i(0);i<m_possible.size();++i){
-        int tirage= rand()% liste_1.size();
-        liste_2[i]=liste_1[tirage];
-        liste_1.erase(liste_1.begin()+tirage);
+bool Profondeur::choisirPossible(){
+    int x = rand()%9;
+    int y = rand()%9;
+    int val = rand()%9;
+
+    int nombreBoucle=0;
+    boucle:
+    while( x <9){
+        while( y <9 ){
+            while (val<9){
+                if ( (m_liste_cellules[x][y].m_listeNum[val] == true) && (m_liste_cellules[x][y].m_valeur ==0) ){
+                    m_possible.m_x=x;
+                    m_possible.m_y=y;
+                    m_possible.m_valeur = val+1;
+                    return true;
+                }
+                val +=1;
+                }
+            val=0;
+            y+=1;
+            }
+        y=0;
+        x+=1;
     }
-    //ici, liste_1 est vide, et liste_2 m�lang�e
-    vector<Cellule> nouveau(m_possible.size());
-    for(int i(0);i<m_possible.size();++i)
-        nouveau[i]=m_possible[liste_2[i]];
+    //on reboucle depuis le début;
+    nombreBoucle+=1;
+    x=0;
+    y=0;
+    val=0;
 
-    m_possible=nouveau;
+    if(nombreBoucle ==1)
+        goto boucle;
+    cout << "erreur choisirPossible"<<endl;
+
+    return false;
 }
+
 
 bool Profondeur::essayer(){
-    if (m_possible.size()==0){
-        return true;
-    }
-    m_niveauSup = new Profondeur(*this);
 
-    if ( (m_niveauSup->setValeur(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur)) == false){
+    m_niveauSup = new Profondeur(*this);
+    if (! m_niveauSup->choisirPossible())
+        return false;
+
+    if ( (m_niveauSup->setValeur(m_niveauSup->m_possible.m_x,m_niveauSup->m_possible.m_y,m_niveauSup->m_possible.m_valeur)) == false){
         return false;
     }
     if ((m_niveauSup->faireCalculer()) == false)
         return false;
-    /*if (m_niveauSup->m_erreur_carte == false)
-        return false;*/
 
-    m_niveauSup->genererPossible();
     return true;
 }
 
 bool Profondeur::boucle(){
     a:
-    cout << "taille boucle " << m_possible.size() << endl;
 
-    if (m_possible.size() == 0){ //si la liste est vide : a-t-on trouvé ? Sinon false
-        for(int i(0);i<9;++i)
-            for(int j(0);j<9;++j)
-                if (m_liste_cellules[i][j].m_valeur ==0)
-                    return false;
-
+    cout << m_modification <<" nombre modification " <<endl;
+    if (m_modification >= 648) //alors la carte est pleine.
         return true;
 
-//        if (m_erreur_carte == true)
-//            return true;
-//        else return false;
-    }
-    if ( essayer() == false){ // essayer le m_possible[0]
+    if ( essayer() == false){ // essayer le m_possible du niveauSup
+        if ( ! setOff(m_niveauSup->m_possible.m_x,m_niveauSup->m_possible.m_y,m_niveauSup->m_possible.m_valeur) ){ //si bug dans la carte testée ...
+            delete m_niveauSup;   // si c'est faux
+            m_niveauSup = NULL;
+            return false;
+        }
+
         delete m_niveauSup;   // si c'est faux
         m_niveauSup = NULL;
-        setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
-        m_possible.clear();
-
-        genererPossible();
 
         goto a;
-    } // donc la le m_possible[0] est vrai (pour l'instant)
+    } // donc la le m_possible est vrai (pour l'instant)
 
 
     if (m_niveauSup->boucle() == false){ //au début de l'appel, on teste la  taille du niveauSup :ok
+        if (! setOff(m_niveauSup->m_possible.m_x,m_niveauSup->m_possible.m_y,m_niveauSup->m_possible.m_valeur) ){
+            delete m_niveauSup;   // si c'est faux
+            m_niveauSup = NULL;
+            return false;
+        }
+
         delete m_niveauSup;
         m_niveauSup = NULL;
-        setOff(m_possible[0].m_x,m_possible[0].m_y,m_possible[0].m_valeur);
-        m_possible.clear();
-        genererPossible();
 
-        //comme on a modifié la carte (actuelle) on vérifie encore une fois si elle est vrai / ou bien si liste == 0 et donc fausse)
-
-        goto a;
+        goto a; // comme la boucle est fausse, on cherche un autre essai (vrai) à boucler.
     }
-    else return true;
 
-} // on remarque qu'on pourrait moins souvent vérifiée si la carte finale est vraie ...
+    return true; // la boucle est vraie, donc provient d'une boucle vraie, qui provient d'une m_modification >= 728 vraie ...
+
+}
+
 
 Profondeur::~Profondeur(){
     if (m_niveauSup)
@@ -1339,7 +1326,8 @@ Profondeur::~Profondeur(){
 }
 
 int Profondeur::recuperer(vector<vector<int>>& tableau){
-    tableau[m_possible[0].m_x][m_possible[0].m_y]= m_possible[0].m_valeur;
+    if (m_possible.m_valeur != 0)
+        tableau[m_possible.m_x][m_possible.m_y]= m_possible.m_valeur;
     if (m_niveauSup)
         return m_niveauSup->recuperer(tableau) +1;
     else return 0;
@@ -1350,7 +1338,6 @@ Profondeur* Profondeur::derniereCarte(){
     if (m_niveauSup == NULL)
         return this;
     else return m_niveauSup->derniereCarte();
-
 }
 
 
