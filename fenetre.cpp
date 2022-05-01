@@ -61,7 +61,7 @@ Fenetre::Fenetre()
     m_afficherSolution=NULL;
     m_afficherHypothese=NULL;
     m_texte= texte;
-    m_nbrHypotheses=NULL;
+    m_afficherNbrHypotheses=NULL;
     m_profondeur= NULL;
     m_fenetre_resultat= NULL;
 
@@ -79,8 +79,8 @@ Fenetre::~Fenetre()
         delete m_afficherSolution;
     if (m_afficherHypothese)
         delete m_afficherHypothese;
-    if (m_nbrHypotheses)
-        delete m_nbrHypotheses;
+    if (m_afficherNbrHypotheses)
+        delete m_afficherNbrHypotheses;
     if (m_fenetre_resultat)
         delete m_fenetre_resultat;
 
@@ -98,6 +98,19 @@ void Fenetre::genererSolution(){
         delete m_afficherSolution;
     if (m_afficherHypothese)
         delete m_afficherHypothese;
+    if (m_afficherNbrHypotheses)
+        delete m_afficherNbrHypotheses;
+    if(m_fenetre_resultat)
+        delete m_fenetre_resultat;
+
+    m_fenetre_resultat=NULL;
+    m_afficherNbrHypotheses=NULL;
+    m_afficherCalcul=NULL;
+    m_sudoku=NULL;
+    m_profondeur=NULL;
+    m_afficherSolution=NULL;
+    m_afficherHypothese=NULL;
+
 
     m_erreur_carte = true;
 
@@ -212,15 +225,15 @@ void Fenetre::genererSolution(){
     else
         nbrHypoString = nbrHypoString + "erreur dans la donnée de la carte";
 
-    m_nbrHypotheses=new QTextEdit;
-    m_nbrHypotheses->setPlainText(QString::fromStdString(nbrHypoString));
+    m_afficherNbrHypotheses=new QTextEdit;
+    m_afficherNbrHypotheses->setPlainText(QString::fromStdString(nbrHypoString));
     //m_nbrHypotheses->setWindowTitle("nombre Hypotheses :");
 
     QGridLayout * fenetre2_layout= new QGridLayout;
     fenetre2_layout->addWidget(m_afficherCalcul,0,0,1,1);
     fenetre2_layout->addWidget(m_afficherHypothese,0,1,1,1);
     fenetre2_layout->addWidget(m_afficherSolution,1,0,1,1);
-    fenetre2_layout->addWidget(m_nbrHypotheses,1,1,1,1);
+    fenetre2_layout->addWidget(m_afficherNbrHypotheses,1,1,1,1);
 
     m_fenetre_resultat = new QWidget;
     m_fenetre_resultat->setLayout(fenetre2_layout);

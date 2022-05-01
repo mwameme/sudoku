@@ -1257,7 +1257,7 @@ bool Profondeur::choisirPossible(){
     y=0;
     val=0;
 
-    if(nombreBoucle ==1)
+    if(nombreBoucle ==1 )
         goto boucle;
     cout << "erreur choisirPossible"<<endl;
 
@@ -1283,7 +1283,7 @@ bool Profondeur::essayer(){
 bool Profondeur::boucle(){
     a:
 
-    cout << m_modification <<" nombre modification " <<endl;
+//    cout << m_modification <<" nombre modification " <<endl;
     if (m_modification >= 648) //alors la carte est pleine.
         return true;
 

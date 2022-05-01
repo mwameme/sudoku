@@ -22,7 +22,7 @@ public :
     QTextEdit* m_afficherHypothese;
     QTextEdit* m_afficherCalcul;
     QTextEdit* m_texte;
-    QTextEdit* m_nbrHypotheses;
+    QTextEdit* m_afficherNbrHypotheses;
 
     QButtonGroup* m_group;
 
