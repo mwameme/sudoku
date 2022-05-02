@@ -116,13 +116,13 @@ void Fenetre::genererSolution(){
 
     string s_iterer, s_generer, s_solution;
     int nbrHypo;
-    cout << m_group->checkedId() <<" choix "<<endl;
+   // cout << m_group->checkedId() <<" choix "<<endl;
     if (m_group->checkedId() <=1){
         m_sudoku=new Essai(texte_sudoku);
 //        m_erreur_carte = m_sudoku->m_erreur_carte;
 
         m_sudoku->m_aleatoire = m_group->checkedId();
-        cout << m_sudoku->m_aleatoire<<" aleatoire "<<endl;
+        //cout << m_sudoku->m_aleatoire<<" aleatoire "<<endl;
 
         m_erreur_carte = m_sudoku->iterer();
         s_iterer = m_sudoku->getStringVal();
@@ -148,18 +148,21 @@ void Fenetre::genererSolution(){
                 tableau2[i][j]=m_sudoku->m_liste_cellules[i][j].m_valeur;
         m_sudoku->getSolution(tableau2);
 
-        string s_avant_solution;
+        Essai* carteFinale = m_sudoku->derniereCarte();
+
+        //cout << carteFinale << " adresse " <<endl;
+
         for(int j(0);j<9;++j){
-            for(int i(0);i<9;++i)
-                s_avant_solution += std::to_string(tableau2[i][j]);
-            s_avant_solution +='\n';
+            for(int i(0);i<9;++i){
+                s_solution += std::to_string( carteFinale->m_liste_cellules[i][j].m_valeur );
+                s_solution += ' ';
+            }
+            s_solution +='\n';
         }
 
-        Essai monSudokuTest(s_avant_solution);
-        monSudokuTest.iterer();
-        s_solution= monSudokuTest.getStringVal();
 
-        m_profondeur= NULL;
+        delete m_sudoku;
+        m_sudoku = NULL;
     }
     else{
         m_sudoku = NULL;
@@ -178,7 +181,7 @@ void Fenetre::genererSolution(){
 
         vector<vector<int>> hypotheses(9,vector<int> (9,0));
         nbrHypo = m_profondeur->recuperer(hypotheses);
-        cout << nbrHypo <<" nbr Hypo " << endl;
+        //cout << nbrHypo <<" nbr Hypo " << endl;
         Carte* derniereCarte= m_profondeur->derniereCarte();
 
 
@@ -192,6 +195,8 @@ void Fenetre::genererSolution(){
 
         s_solution= derniereCarte->getStringVal();
 
+        delete m_profondeur;
+        m_profondeur=NULL;
 
 
     }

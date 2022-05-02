@@ -161,6 +161,7 @@ public :
 
     int nombrePossible();
     int getSolution(std::vector<std::vector<int>>& tableau);
+    Essai* derniereCarte();
 
 
     //part d'une carte, et liste les essais à tester, et itere les calculs !

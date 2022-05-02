@@ -375,13 +375,13 @@ Carte::Carte(string string_sudoku)
         if ((1<=numero) && (numero<=9))
         {
             if((i>8)||(j>8)){
-                cout<<"mauvais fichier : ne respecte pas la norme"<<endl;
+                //cout<<"mauvais fichier : ne respecte pas la norme"<<endl;
                 m_erreur_carte=false;
                 break;
             }
             if (! (setValeur(i,j,numero))){
                 m_erreur_carte=false;
-                cout<<"erreur carte !"<<endl;
+                //cout<<"erreur carte !"<<endl;
                 break;
             }
             ++i;
@@ -401,18 +401,18 @@ Carte::Carte(string string_sudoku)
 
     if (!m_erreur_carte)
     {
-        cout<<"pas de lancement du jeu ..."<<endl;
-        cout<<*this;
+        //cout<<"pas de lancement du jeu ..."<<endl;
+        //cout<<*this;
         return;
     }
 
 
     if (!faireCalculer()){
         m_erreur_carte = false;
-        cout<<"erreur carte !"<<endl;
+        //cout<<"erreur carte !"<<endl;
     }
 
-    cout<<"lecture fichier ok"<<endl;
+    //cout<<"lecture fichier ok"<<endl;
 
     return;
 
@@ -1197,6 +1197,13 @@ int Essai::getSolution(vector<vector<int>>& tableau){
     else return 1;
 }
 
+Essai* Essai::derniereCarte(){
+    if (m_solution)
+        return m_solution->derniereCarte();
+    return this;
+
+}
+
 inline bool comparaison_modification::operator() (const Essai* struct1, const Essai* struct2)
 {
     return (struct1->m_modification > struct2->m_modification);
@@ -1259,7 +1266,7 @@ bool Profondeur::choisirPossible(){
 
     if(nombreBoucle ==1 )
         goto boucle;
-    cout << "erreur choisirPossible"<<endl;
+    //cout << "erreur choisirPossible"<<endl;
 
     return false;
 }
