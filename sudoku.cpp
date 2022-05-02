@@ -1263,10 +1263,12 @@ bool Profondeur::choisirPossible(){
     x=0;
     y=0;
     val=0;
+    //cout << "ok" <<endl;
 
-    if(nombreBoucle ==1 )
+    if(nombreBoucle <=2 )
         goto boucle;
     //cout << "erreur choisirPossible"<<endl;
+    cout << " boucle erreur" <<endl;
 
     return false;
 }
