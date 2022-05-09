@@ -119,6 +119,7 @@ void Fenetre::genererSolution(){
    // cout << m_group->checkedId() <<" choix "<<endl;
     if (m_group->checkedId() <=1){
         m_sudoku=new Essai(texte_sudoku);
+        m_sudoku->faireCalculer();
 //        m_erreur_carte = m_sudoku->m_erreur_carte;
 
         m_sudoku->m_aleatoire = m_group->checkedId();
@@ -167,6 +168,7 @@ void Fenetre::genererSolution(){
     else{
         m_sudoku = NULL;
         m_profondeur =new Profondeur(texte_sudoku);
+        m_profondeur->faireCalculer();
 
         m_erreur_carte = m_profondeur->m_erreur_carte;
 
