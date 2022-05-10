@@ -20,10 +20,18 @@ Fenetre::Fenetre()
     QVBoxLayout* fenetreLayout = new QVBoxLayout;
     string mastring;
     mastring = "programmé en C++ par Gustave Robichon";
-
+    mastring += '\n';
+    mastring += '\n';
+    mastring+= "écrivez dans ce bloc une matrice d'entrée,";
+    mastring+= '\n';
+    mastring+= "ou bien laissez vide pour générer un sudoku,";
+    mastring+='\n';
+    mastring+= "puis cliquez sur \"résoudre\" ";
     setWindowTitle("sudoku");
 
-    QTextEdit* texte = new QTextEdit(QString::fromStdString(mastring));
+
+    QTextEdit* texte = new QTextEdit();
+    texte->setPlainText(QString::fromStdString(mastring));
     //QGroupBox* groupeBouton = new QGroupBox;
     QVBoxLayout* groupeBouton = new QVBoxLayout;
 
