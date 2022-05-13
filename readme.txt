@@ -52,7 +52,7 @@ On remarque que le niveau n+1 se calcule en définissant dans un objet un pointe
 Cet algorithme est donc juste un calcul de niveau, au-dessus d'un premier calcul (de sudoku).
 
 
-Résumé :
+<<<<<<<<<<<<<<<<<< Résumé : >>>>>>>>>>>>>>>>>>
 liste et liste réciproques : liste dans une case des chiffres encore possibles, et liste dans un carré, pour chaque chiffre, des cases qui acceptent encore ce chiffre-là. Ca marche en récursif
 
 Chercher les doublets : 2 cases dans le même carré qui on toutes les deux seulement deux chiffres (et les mêmes).
