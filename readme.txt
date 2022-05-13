@@ -50,3 +50,17 @@ boucle : générer n+1
 On remarque que le niveau n+1 se calcule en définissant dans un objet un pointeur vers un objet. Dans une fonction, on met une boucle, et dans la boucle on appelle la fonction (associée à l'objet pointé) : au niveau 3 celà donne une boucle de boucle de boucle. Donc celà génère un calcul de niveau (ici 3). Si dans une boucle on trouve un false, on quitte la boucle (donc on descend de niveau). Si on trouve un true on quitte toutes les boucles : c'est la solution.
 
 Cet algorithme est donc juste un calcul de niveau, au-dessus d'un premier calcul (de sudoku).
+
+
+Résumé :
+liste et liste réciproques : liste dans une case des chiffres encore possibles, et liste dans un carré, pour chaque chiffre, des cases qui acceptent encore ce chiffre-là. Ca marche en récursif
+
+Chercher les doublets : 2 cases dans le même carré qui on toutes les deux seulement deux chiffres (et les mêmes).
+
+Idem : triplet
+
+raisonnement - Si : si dans un carré les 3 sont tous dans la ligne du bas (on enlève les 3 de cette ligne, sauf dans ce même carré).
+
+Puis les niveaux : dans la carte de base on fait la liste des numéros encore possibles, on les teste chacun, et à chaque erreur on enlève le numéro : de la carte de base, et des essais qu'on est en train de faire.
+
+Niveau : profondeur : on ne test pas tout le niveau 1 : on prend un des nombres possibles au hasard, et on teste ... Génère plus d' "hypothèses"
