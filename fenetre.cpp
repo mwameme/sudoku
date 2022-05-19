@@ -22,11 +22,12 @@ Fenetre::Fenetre()
     mastring = "programmé en C++ par Gustave Robichon";
     mastring += '\n';
     mastring += '\n';
-    mastring+= "écrivez dans ce bloc une matrice d'entrée,";
+    mastring+= "lire readme.txt";
     mastring+= '\n';
-    mastring+= "ou bien laissez vide pour générer un sudoku,";
-    mastring+='\n';
-    mastring+= "puis cliquez sur \"résoudre\" ";
+    mastring+= '\n';
+    mastring+="température : entrer un nombre dans la case en bas";
+
+
     setWindowTitle("sudoku");
 
 
@@ -43,20 +44,30 @@ Fenetre::Fenetre()
     m_group->setExclusive(true);
     QCheckBox* checkbox1 = new QCheckBox("niveau un : aléatoire");
     QCheckBox* checkbox2 = new QCheckBox("niveau un : minimum");
+    QCheckBox* checkbox4 = new QCheckBox("niveau un : temperature");
     QCheckBox* checkbox3 = new QCheckBox("profondeur : aléatoire");
     m_group->addButton(checkbox1,1);
     m_group->addButton(checkbox2,0);
     m_group->addButton(checkbox3,2);
+    m_group->addButton(checkbox4,3);
 
     checkbox2->setChecked(true);
 
 
-    groupeBouton->addWidget(checkbox2);
-    groupeBouton->addWidget(checkbox1);
-    groupeBouton->addWidget(checkbox3);
+    groupeBouton->addWidget(checkbox2); //niveau un minimum, 0
+    groupeBouton->addWidget(checkbox4); // niveau un temperature, 3
+    groupeBouton->addWidget(checkbox1); //niveau un aleatoire, 1
+    groupeBouton->addWidget(checkbox3); // profondeur aleatoire, 2
+
+    m_entree_temperature= new QDoubleSpinBox();
+    m_entree_temperature->setMaximum(1000);
+    m_entree_temperature->setMinimum(0.001);
+
+
 
     fenetreLayout->addWidget(texte);
     fenetreLayout->addLayout(groupeBouton);
+    fenetreLayout->addWidget(m_entree_temperature);
     fenetreLayout->addWidget(ok);
 
 
@@ -125,9 +136,20 @@ void Fenetre::genererSolution(){
     string s_iterer, s_generer, s_solution;
     int nbrHypo;
    // cout << m_group->checkedId() <<" choix "<<endl;
-    if (m_group->checkedId() <=1){
+    cout << m_group->checkedId() <<endl;
+
+
+    if (m_group->checkedId() != 2){
         m_sudoku=new Essai(texte_sudoku);
+        m_sudoku->m_temperature = m_entree_temperature->value();
+
+//        if (m_sudoku->m_temperature <= 0.01)
+//            m_sudoku->m_temperature  = 0.01;
+        m_sudoku->m_temperature = m_sudoku->m_temperature;
+        m_sudoku->m_temperature = m_sudoku->m_temperature * 0.05;
+
         m_sudoku->faireCalculer();
+
 //        m_erreur_carte = m_sudoku->m_erreur_carte;
 
         m_sudoku->m_aleatoire = m_group->checkedId();

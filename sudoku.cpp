@@ -917,6 +917,7 @@ Essai::Essai(Essai const& essai) : Test(essai){
     m_liste_tests.resize(0);
     m_solution=NULL;
     m_aleatoire = essai.m_aleatoire;
+    m_temperature = essai.m_temperature;
 }
 
 
@@ -1031,7 +1032,7 @@ bool Essai::ajouterTest(int x,int y,int val){
 }
 
 Essai::Essai(string string_sudoku) : Test(string_sudoku){
-    m_liste_tests.reserve(81*sizeof(Test*));
+    m_liste_tests.reserve(100*sizeof(Test*));
     m_liste_tests.resize(0);
     m_erreur=true; //pas d'erreur globale
     m_solution=NULL;
@@ -1080,12 +1081,78 @@ bool Essai::iterer(){ //ajouter les essais ! tous
     }
 
     //on trie selon le nombre de moficiation de chaque carte
-    if (m_aleatoire == false)
+    if (m_aleatoire == 0)
         std::sort(m_liste_tests.begin(),m_liste_tests.end(),comparaison_modification());
+    if (m_aleatoire == 3)
+        ordreSemiAleatoire();
+
+//    m_liste_tests.resize(5);
 
     return true;
 
 }
+
+
+void Essai::ordreSemiAleatoire(){
+    if(m_modification >= 645)
+        return;
+    double modification_moyenne=0;
+    for(int i(0);i<m_liste_tests.size();++i)
+        modification_moyenne+=m_liste_tests[i]->m_modification - m_modification;
+
+    for(int i(0);i<m_liste_tests.size();++i){ //calculer m_fact_alea ;
+
+        if(m_liste_tests[i]->m_modification != m_modification)
+            m_liste_tests[i]->m_fact_alea= exp((-1./m_temperature) /((double) (m_liste_tests[i]->m_modification - m_modification)));
+        else
+            m_liste_tests[i]->m_fact_alea=0;
+
+//        m_liste_tests[i]->m_fact_alea= exp((+1./m_temperature) * ((double) (m_liste_tests[i]->m_modification - m_modification)));
+//        m_liste_tests[i]->m_fact_alea=1;
+
+    }
+    double somme=0;
+
+    for(int i(0);i<m_liste_tests.size();++i)
+        somme+= m_liste_tests[i]->m_fact_alea;
+//    for(int i(0);i<m_liste_tests.size();++i)
+//        m_liste_tests[i]->m_fact_alea = m_liste_tests[i]->m_fact_alea / somme;
+
+//    cout << "somme renormalisée : " << somme / m_liste_tests.size() <<endl;
+
+//    somme=1;
+    for(int i(0); (i<7) && (i<m_liste_tests.size()); ++i){
+/*
+        somme=0;
+        for(int j(i);j<m_liste_tests.size();++j)
+            somme+= m_liste_tests[j]->m_fact_alea;
+        cout << "somme : " << somme << endl;
+*/
+        double nombre_genere = ((double)(rand()) / ((double)(RAND_MAX))) *somme;
+        double somme_locale=0;
+        int j;
+        for(j=i;j<m_liste_tests.size();++j){
+            somme_locale+= m_liste_tests[j]->m_fact_alea;
+            if (somme_locale >= nombre_genere)
+                break;
+        }
+        if (j== m_liste_tests.size())
+            --j;
+        if (j<0)
+            break;
+        if (i!=j){
+            Essai* temp= m_liste_tests[i];
+            m_liste_tests[i]=m_liste_tests[j];
+            m_liste_tests[j]=temp;
+        }
+        somme=somme - m_liste_tests[i]->m_fact_alea;
+    }
+
+    viderListe();
+
+}
+
+
 
 
 Essai::~Essai(){
@@ -1097,27 +1164,6 @@ Essai::~Essai(){
     //destruction recursive
 }
 
-bool Essai::niveauDeux(){
-    if (! iterer())
-        return false;
-    //cout<<"taille liste niveau deux : "<<m_liste_tests.size()<<endl;
-    int i(0);
-    if (m_aleatoire == false)
-        std::sort(m_liste_tests.begin(),m_liste_tests.end(),comparaison_modification());
-    while(i<m_liste_tests.size()){
-        if(! m_liste_tests[i]->iterer()){ //si probleme dans l'it�ration : enlever, et donc aussi nettoyer !
-            if(! enlever(m_liste_tests[i]->m_x,m_liste_tests[i]->m_y,m_liste_tests[i]->m_val)){ //enleve dans la carte principale ET dans toute la liste
-                m_erreur = false; //erreur de la carte principale
-                return false;
-            }
-            nettoyerListe();
-            delete m_liste_tests[i];
-            m_liste_tests.erase(m_liste_tests.begin()+i);
-        }
-        else ++i;
-    }
-    return true;
-}
 
 int Essai::nombrePossible(){
     vector<vector<int>> cartePossible(9,vector<int>(9,0));
@@ -1154,6 +1200,17 @@ void melangerListe(vector<Essai*>& mon_vecteur){
     mon_vecteur=nouveau;
 }
 
+void Essai::viderListe(){
+    for(int i(m_liste_tests.size()-1); i>=7; --i){
+        delete m_liste_tests[i];
+        m_liste_tests.erase(m_liste_tests.begin()+i);
+    }
+    return;
+
+
+
+}
+
 bool Essai::generer(){ //return true si trouv�, false si erreur : alors on boucle
     //cout<<"taille "<<m_liste_tests.size()<<endl;
     m_solution=NULL;
@@ -1165,12 +1222,14 @@ bool Essai::generer(){ //return true si trouv�, false si erreur : alors on bou
             return false;
         }
     }
+
     if(m_liste_tests.size() == 0) //si on a trouv� un unique essai ! fin de la pile
         return true;
 //    cout<<"taille "<<m_liste_tests.size()<<endl;
 
-    if (m_aleatoire == true)
+    if (m_aleatoire == 1)
         melangerListe(m_liste_tests); //on insere de l'al�atoire
+    viderListe();
     while(m_liste_tests.size()>0){
     //for(int i(0);i<m_liste_tests.size();++i){ //on parcourt les essais qu'on a it�r�s
         if (m_liste_tests[0]->generer()){ //si on a trouv� ! on sauvegarde le chemin

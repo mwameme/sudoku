@@ -1,5 +1,7 @@
 #include "fenetre.h"
 #include <QApplication>
+#include <random>
+
 
 /* CREE par GUSTAVE ROBICHON, sur Qt
  *  17/04/2021
@@ -70,6 +72,8 @@
 
 int main(int argc, char *argv[])
 {
+    std::srand(std::time(nullptr));
+
     QApplication a(argc, argv);
     Fenetre w;
 

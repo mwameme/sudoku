@@ -5,6 +5,7 @@
 #include <QTextEdit>
 #include "sudoku.h"
 #include <QButtonGroup>
+#include <QDoubleSpinBox>
 
 
 
@@ -23,10 +24,12 @@ public :
     QTextEdit* m_afficherCalcul;
     QTextEdit* m_texte;
     QTextEdit* m_afficherNbrHypotheses;
+    QDoubleSpinBox* m_entree_temperature;
 
     QButtonGroup* m_group;
 
     QWidget* m_fenetre_resultat;
+
 
     bool m_erreur_carte;
 public:

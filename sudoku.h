@@ -6,6 +6,8 @@
 
 #include <ctime> // Obligatoire
 #include <cstdlib> // Obligatoire
+#include <math.h>       /* exp */
+
 
 
 //on fait setValue depuis la carte :
@@ -156,12 +158,14 @@ public :
     bool tester(int x,int y,int val);
     void nettoyerListe();
 
-    bool niveauDeux();
+//    bool niveauDeux();
     bool generer();
 
     int nombrePossible();
     int getSolution(std::vector<std::vector<int>>& tableau);
     Essai* derniereCarte();
+    void viderListe();
+    void ordreSemiAleatoire();
 
 
     //part d'une carte, et liste les essais à tester, et itere les calculs !
@@ -172,9 +176,14 @@ public :
     Essai();
     ~Essai();
 
-    bool m_aleatoire;
+    int m_aleatoire;
+    double m_temperature;
+    double m_fact_alea;
 
 };
+
+void melangerListe(std::vector<Essai*>& mon_vecteur);
+
 
 std::ostream& operator<<( std::ostream &flux, Essai const& essai );
 std::ostream& operator<<( std::ostream &flux, Test const& test );
