@@ -25,7 +25,7 @@ Fenetre::Fenetre()
     mastring+= "lire readme.txt";
     mastring+= '\n';
     mastring+= '\n';
-    mastring+="température : entrer un nombre dans la case en bas";
+    mastring+="température : entrer un nombre dans la case en bas, entre un dixième et dix";
 
 
     setWindowTitle("sudoku");
@@ -143,10 +143,10 @@ void Fenetre::genererSolution(){
         m_sudoku=new Essai(texte_sudoku);
         m_sudoku->m_temperature = m_entree_temperature->value();
 
-//        if (m_sudoku->m_temperature <= 0.01)
-//            m_sudoku->m_temperature  = 0.01;
+        if (m_sudoku->m_temperature <= 0.001)
+            m_sudoku->m_temperature  = 0.001;
         m_sudoku->m_temperature = m_sudoku->m_temperature;
-        m_sudoku->m_temperature = m_sudoku->m_temperature * 0.05;
+        m_sudoku->m_temperature = m_sudoku->m_temperature * 0.01;
 
         m_sudoku->faireCalculer();
 
