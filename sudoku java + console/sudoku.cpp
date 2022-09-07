@@ -3,13 +3,15 @@
 #include <vector>
 #include "sudoku.h"
 #include <algorithm>
+#include <exception>
+
 
 //#include <bits/stdc++.h>
 
 using namespace std;
 
 int niveau_iter=-1;
-int nbr_niveaux = 0;
+int nbr_niveaux;
 
 Cellule::Cellule()
 {
@@ -1065,6 +1067,7 @@ Essai::Essai(string string_sudoku) : Carte(string_sudoku){
     m_solution=NULL;
     m_mere=NULL;
     m_niveau = 0;
+    nbr_niveaux = 45;
 //    cout<<"construction Essai r�ussie ..."<<endl;
 }
 
@@ -1249,9 +1252,9 @@ void Essai::viderListe(){
 
 bool Essai::generer(){ //return true si trouv�, false si erreur : alors on boucle
     //cout<<"taille "<<m_liste_tests.size()<<endl;
-    nbr_niveaux++;
-    if (nbr_niveaux > 60)
-        throw("Trop de niveaux générés");
+    nbr_niveaux--;
+    if (nbr_niveaux <=  0)
+        throw runtime_error("Trop de niveaux générés");
 
     m_solution=NULL;
     m_erreur =true;
@@ -1337,9 +1340,6 @@ Profondeur::Profondeur(Carte const & carte) : Carte(carte){
 //    erreur_iterer = true;
 
     niveau_iter = -1;
-    nbr_niveaux = 0;
-
-
 }
 
 Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
@@ -1348,8 +1348,7 @@ Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
     m_niveau = 0;
     niveau_iter = -1;
     m_essai = NULL;
-//    erreur_iterer = true;
-
+    nbr_niveaux = 10;
     //    faireCalculer();
 
 }
@@ -1425,9 +1424,9 @@ bool Profondeur::essayer(){
 
 bool Profondeur::boucle(){
 
-    if (nbr_niveaux > 60) {
+    if (nbr_niveaux <=0 ) {
         cout << "fin niveau ...";
-        throw("Trop de niveaux générés");
+        throw runtime_error("Trop de niveaux générés");
     }
 
 	int nbr_boucle=0;
@@ -1444,7 +1443,7 @@ bool Profondeur::boucle(){
         }
     if (m_niveau <= niveau_iter)
         if (m_essai == NULL) {
-            nbr_niveaux++;
+            nbr_niveaux--;
             m_essai = new Essai(*this);
             if (!m_essai->iterer())
                 return false;

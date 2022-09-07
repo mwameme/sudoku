@@ -3,7 +3,7 @@ Rentrer le sudoku dans ce fichier, selon le format décrit :
 Premiere ligne : choisir le type de résolution :
 - 0 : niveau un : minimum
 - 1 : niveau un : aleatoire
-- 2 : profondeur (aleatoire)
+- 2 : niveau 0 : aleatoire
 - 3 : niveau un : semi-aléatoire
 - 4 : résolution simple (sans génération)
 

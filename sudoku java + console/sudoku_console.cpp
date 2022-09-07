@@ -8,6 +8,7 @@
 #include <fstream> //fichiers
 #include <cstdlib> // rand
 #include "sudoku.h"
+#include <exception>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ int main(int argc, char* argv[])
 		fstream fichier;
 		fichier.open("sudoku.txt", ios_base::in);
 		if (!fichier.is_open())
-			throw("echec ouverture fichier");
+			throw ios_base::failure("echec ouverture fichier");
 		char choix_char;
 		char chaine_entree[200];
 		if (!fichier.eof())
@@ -45,15 +46,15 @@ int main(int argc, char* argv[])
 			choix = 4;
 
 		if (choix == -1)
-			throw ("choix incorrect");
+			throw domain_error("choix incorrect");
 		double temperature = 0;
 		if (choix == 3) {
 			if ((chaine_entree[1] == '\0'))
-				throw("temperature non specificée");
+				throw domain_error("temperature non specificée");
 			string mon_reel(chaine_entree + 2, 10);
 			temperature = std::stod(mon_reel);
 			if (temperature <= 0)
-				throw("temperature negative ou nulle");
+				throw domain_error("temperature negative ou nulle");
 			//		cout << "temperature : " << temperature << endl;
 		}
 		else temperature = 1;
@@ -61,7 +62,7 @@ int main(int argc, char* argv[])
 		fichier.get(chaine_entree, 199, EOF);
 		fichier.close();
 		if (fichier.is_open())
-			throw ("echec fermeture fichier");
+			throw ios_base::failure("echec fermeture fichier");
 
 
 		string string_sudoku(chaine_entree);
@@ -113,8 +114,27 @@ int main(int argc, char* argv[])
 			//		cout << s_iterer << endl;
 			//		cin >> continuer;
 
-			if (m_erreur_carte)
-				m_erreur_carte = m_sudoku->generer();
+			if (m_erreur_carte) {
+				int nbrIter = 0;
+			exception0:
+				try {
+					m_erreur_carte = m_sudoku->generer();
+				}
+				catch (exception const& e) {
+					cerr << "ERREUR : " << e.what() << endl;
+					++nbrIter;
+					if (nbrIter >= 3)
+						throw(e);
+					if (m_sudoku->m_liste_tests.size() > 0) {
+						for (int i(0); i < m_sudoku->m_liste_tests.size(); ++i)
+							delete m_sudoku->m_liste_tests[i];
+						m_sudoku->m_liste_tests.clear();
+					}
+					goto exception0;
+				}
+			}
+
+
 
 			//		cout << "fin generer " << endl;
 			//		cin >> continuer;
@@ -171,8 +191,22 @@ int main(int argc, char* argv[])
 
 			//        m_profondeur->genererPossible();
 
-			if (m_erreur_carte)
-				m_erreur_carte = m_profondeur->boucle();
+			if (m_erreur_carte) {
+				int nbrIter = 0;
+			exception2:
+				try {
+					m_erreur_carte = m_profondeur->boucle();
+				}
+				catch (std::exception const& e) {
+					cerr << "ERREUR : " << e.what() << endl;
+					++nbrIter;
+					if (m_profondeur->m_niveauSup)
+						delete m_profondeur->m_niveauSup;
+					if (nbrIter < 3)
+						goto exception2;
+					else throw(e);
+				}
+			}
 
 			if (m_erreur_carte) {
 
@@ -263,10 +297,10 @@ int main(int argc, char* argv[])
 			fichier << char_iterer;
 			fichier.close();
 			if (fichier.is_open())
-				throw("erreur fermeture fichier premier calcul");
+				throw ios_base::failure("erreur fermeture fichier premier calcul");
 		}
 		else
-			throw ("erreur ouverture fichier premier calcul");
+			throw ios_base::failure("erreur ouverture fichier premier calcul");
 
 		//	cout << "fin premier fichier !" << endl;
 		//	cin >> continuer;
@@ -278,30 +312,30 @@ int main(int argc, char* argv[])
 			fichier << char_generer;
 			fichier.close();
 			if (fichier.is_open())
-				throw("erreur fermeture fichier hypotheses");
+				throw ios_base::failure("erreur fermeture fichier hypotheses");
 		}
 		else
-			throw ("erreur ouverture fichier hypotheses");
+			throw ios_base::failure("erreur ouverture fichier hypotheses");
 
 		fichier.open("solution.txt", ios_base::out);
 		if (fichier.is_open()) {
 			fichier << char_solution;
 			fichier.close();
 			if (fichier.is_open())
-				throw("erreur fermeture fichier solution");
+				throw ios_base::failure("erreur fermeture fichier solution");
 		}
 		else
-			throw ("erreur ouverture fichier solution");
+			throw ios_base::failure("erreur ouverture fichier solution");
 
 		fichier.open("resume.txt", ios_base::out);
 		if (fichier.is_open()) {
 			fichier << char_hypo;
 			fichier.close();
 			if (fichier.is_open())
-				throw("erreur fermeture fichier erreur");
+				throw ios_base::failure("erreur fermeture fichier erreur");
 		}
 		else
-			throw ("erreur ouverture fichier erreur");
+			throw ios_base::failure("erreur ouverture fichier erreur");
 //	}while (erreur == true);
 //	cout << "FIN" << endl;
 //	cin >> continuer;
