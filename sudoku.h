@@ -128,21 +128,26 @@ public :
 //    std::string getStringTaille() const;
 };
 
+/*
 class Test : public Carte{
 public:
-    int m_x;
-    int m_y;
-    int m_val;
-    bool m_erreur; //false si c'est une erreur !
+ //false si c'est une erreur !
     //une carte, qui suppose m_val en m_x * m_y. Possible ou non ...
     Test();
     Test(Carte const& carte);
     Test(std::string string_sudoku);
     //bool tester(int x,int y,int val);
 };
+*/
+class Profondeur;
 
-class Essai : public Test {//c'est une carte (en héritage) avec une liste de possibles ... récurrence sur les essais faux !
+class Essai : public Carte {//c'est une carte (en héritage) avec une liste de possibles ... récurrence sur les essais faux !
 public :
+    int m_x;
+    int m_y;
+    int m_val;
+    bool m_erreur;
+
     std::vector<Essai*> m_liste_tests; //les différents essais;
         //this->carte : on modifie si test.possible == false
         //et on modifie donc dans tous les tests ...
@@ -173,6 +178,7 @@ public :
     Essai(std::string string_sudoku);
 //    Essai(Carte const& carte);
     Essai(Essai const& essai);
+    Essai(Profondeur const& profondeur);
     Essai();
     ~Essai();
 
@@ -180,28 +186,33 @@ public :
     double m_temperature;
     double m_fact_alea;
 
+    int m_niveau;
+
 };
 
 void melangerListe(std::vector<Essai*>& mon_vecteur);
 
 
 std::ostream& operator<<( std::ostream &flux, Essai const& essai );
-std::ostream& operator<<( std::ostream &flux, Test const& test );
+//std::ostream& operator<<( std::ostream &flux, Test const& test );
 std::ostream& operator<<( std::ostream &flux, Carte const& carte );
 
 void resoudreGenererTester(std::string adresse);
 
+/*
 class comparaison_modification
 {
 public :
     bool operator()(const Essai* struct1, const Essai* struct2);
 
 };
+*/
 
 class Profondeur : public Carte{
 public :
     Profondeur* m_niveauSup;
     Cellule m_possible;
+    Essai* m_essai;
 
 
     bool choisirPossible();
@@ -210,12 +221,17 @@ public :
 
     int recuperer(std::vector<std::vector<int>>& tableau);
 
-    Profondeur(Profondeur& parent);
-    Profondeur(Carte& carte);
+    Profondeur(const Profondeur& parent);
+    Profondeur(const Carte& carte);
+    Profondeur(const Essai& essai);
 
     Profondeur(std::string string_sudoku);
     ~Profondeur();
     Profondeur* derniereCarte();
+
+    int deniere_modification();
+    int m_niveau;
+
 };
 
 
