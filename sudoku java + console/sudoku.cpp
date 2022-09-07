@@ -9,7 +9,7 @@
 using namespace std;
 
 int niveau_iter=-1;
-
+int nbr_niveaux = 0;
 
 Cellule::Cellule()
 {
@@ -1121,6 +1121,8 @@ bool Essai::iterer(){ //ajouter les essais ! tous
         std::sort(m_liste_tests.begin(), m_liste_tests.end(), [](Essai* a, Essai* b) {return a->m_modification > b->m_modification; });
     if (m_aleatoire == 3)
         ordreSemiAleatoire();
+    if (m_aleatoire == 1)
+        melangerListe(m_liste_tests); //on insere de l'al�atoire
 
 //    m_liste_tests.resize(5);
 
@@ -1223,14 +1225,14 @@ void melangerListe(vector<Essai*>& mon_vecteur){
     vector<int> liste_2(mon_vecteur.size());
     for(int i(0);i<mon_vecteur.size();++i)
         liste_1[i]=i;
-    for(int i(0);i<mon_vecteur.size();++i){
+    for(int i(0);(i<mon_vecteur.size()) && (i<5);++i){
         int tirage= rand()% liste_1.size();
         liste_2[i]=liste_1[tirage];
         liste_1.erase(liste_1.begin()+tirage);
     }
     //ici, liste_1 est vide, et liste_2 m�lang�e
     vector<Essai*> nouveau(mon_vecteur.size());
-    for(int i(0);i<mon_vecteur.size();++i)
+    for(int i(0); (i < mon_vecteur.size()) && (i < 5);++i)
         nouveau[i]=mon_vecteur[liste_2[i]];
 
     mon_vecteur=nouveau;
@@ -1247,6 +1249,10 @@ void Essai::viderListe(){
 
 bool Essai::generer(){ //return true si trouv�, false si erreur : alors on boucle
     //cout<<"taille "<<m_liste_tests.size()<<endl;
+    nbr_niveaux++;
+    if (nbr_niveaux > 60)
+        throw("Trop de niveaux générés");
+
     m_solution=NULL;
     m_erreur =true;
     if(m_liste_tests.size()==0){
@@ -1261,8 +1267,6 @@ bool Essai::generer(){ //return true si trouv�, false si erreur : alors on bou
         return true;
 //    cout<<"taille "<<m_liste_tests.size()<<endl;
 
-    if (m_aleatoire == 1)
-        melangerListe(m_liste_tests); //on insere de l'al�atoire
     viderListe();
     while(m_liste_tests.size()>0){
     //for(int i(0);i<m_liste_tests.size();++i){ //on parcourt les essais qu'on a it�r�s
@@ -1320,7 +1324,7 @@ Profondeur::Profondeur(Profondeur const& parent) : Carte(parent)
     m_modification=parent.m_modification;
     m_niveau = parent.m_niveau;
     m_essai = NULL;
-
+//    erreur_iterer = parent.erreur_iterer;
     //m_possible.erase(m_possible.begin());
     //melangerPossible();
 }
@@ -1330,6 +1334,11 @@ Profondeur::Profondeur(Carte const & carte) : Carte(carte){
     m_modification = carte.m_modification;
     m_niveau = 0;
     m_essai = NULL;
+//    erreur_iterer = true;
+
+    niveau_iter = -1;
+    nbr_niveaux = 0;
+
 
 }
 
@@ -1339,6 +1348,8 @@ Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
     m_niveau = 0;
     niveau_iter = -1;
     m_essai = NULL;
+//    erreur_iterer = true;
+
     //    faireCalculer();
 
 }
@@ -1413,21 +1424,33 @@ bool Profondeur::essayer(){
 }
 
 bool Profondeur::boucle(){
+
+    if (nbr_niveaux > 60) {
+        cout << "fin niveau ...";
+        throw("Trop de niveaux générés");
+    }
+
 	int nbr_boucle=0;
+    int nbrIter = 0;
+
     a:
 	
 	if (nbr_boucle >= 5)//éviter les pièges en profondeur. IMPORTANT
         if (m_niveau > niveau_iter) {
-//            cout << "ITERER niveau : " << m_niveau << endl;
+            cout << "ITERER niveau : " << m_niveau << endl;
             niveau_iter = m_niveau;
+//            erreur_iterer = false;
+
         }
     if (m_niveau <= niveau_iter)
         if (m_essai == NULL) {
+            nbr_niveaux++;
             m_essai = new Essai(*this);
             if (!m_essai->iterer())
                 return false;
-            if (niveau_iter > m_niveau + 1)
-                niveau_iter = m_niveau + 1;
+            m_essai->viderListe();
+            if (niveau_iter > m_niveau + 3)
+                niveau_iter = m_niveau + 3;
 
             if (m_essai->m_liste_tests.size() == 0)
                 if (m_essai->m_modification == 648)
@@ -1436,12 +1459,13 @@ bool Profondeur::boucle(){
         }
 
     //    cout << "niveau : " <<m_niveau << endl;
-    nbr_boucle++;
     //    cout << m_modification <<" nombre modification " <<endl;
     if (m_modification >= 648) //alors la carte est pleine.
         return true;
 
     if (m_essai != NULL) {
+//        ++nbrIter;
+//        cout << "iter : " << nbrIter << " ; ";
         int i = m_essai->m_liste_tests.size()-1;
         if (i < 0)
             return false;
@@ -1483,6 +1507,7 @@ bool Profondeur::boucle(){
             goto a;
         } // donc là le m_possible est vrai (pour l'instant)
 
+    nbr_boucle++;
 
     if (m_niveauSup->boucle() == false){ //au début de l'appel, on teste la  taille du niveauSup : ok
         if (! setOff(m_niveauSup->m_possible.m_x,m_niveauSup->m_possible.m_y,m_niveauSup->m_possible.m_valeur) ){
@@ -1502,6 +1527,7 @@ bool Profondeur::boucle(){
 
         goto a; // comme la boucle est fausse, on cherche un autre essai (vrai) à boucler.
     }
+//    erreur_iterer = m_niveauSup->erreur_iterer;
 
     return true; // la boucle est vraie, donc provient d'une boucle vraie, qui provient d'une m_modification >= 648 vraie ...
 
@@ -1515,6 +1541,7 @@ Profondeur::~Profondeur(){
     if (m_essai != NULL)
         delete m_essai;
     m_essai = NULL;
+    
 }
 
 int Profondeur::recuperer(vector<vector<int>>& tableau){

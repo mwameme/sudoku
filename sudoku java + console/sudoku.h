@@ -8,8 +8,6 @@
 #include <cstdlib> // Obligatoire
 #include <math.h>       /* exp */
 
-
-
 //on fait setValue depuis la carte :
 //on appelle cellule.setValue
 //puis on appelle  ligne/colonne/carré.setValue
@@ -231,7 +229,7 @@ public :
 
     int deniere_modification();
     int m_niveau;
-
+//    bool erreur_iterer;
 };
 
 

@@ -1,3 +1,5 @@
+Rentrer le sudoku dans ce fichier, selon le format décrit :
+
 Premiere ligne : choisir le type de résolution :
 - 0 : niveau un : minimum
 - 1 : niveau un : aleatoire
@@ -5,7 +7,7 @@ Premiere ligne : choisir le type de résolution :
 - 3 : niveau un : semi-aléatoire
 - 4 : résolution simple (sans génération)
 
-Toujours sur la première ligne, indiquer apres un espace le coefficient, dans le cas semi-aléatoire.
+Toujours sur la première ligne, indiquer apres un espace le coefficient (réel), dans le cas semi-aléatoire.
 
 De la ligne 2 à la ligne 10, écrire le sudoku (ou rien du tout), qui sera augmenté (génération de sudoku sur cette base). mettre 0 a chaque fois que le chiffre n'est pas connu. Le saut de ligne est la fin de la ligne du sudoku.
 
