@@ -1066,9 +1066,13 @@ Essai::Essai(string string_sudoku) : Carte(string_sudoku){
     m_erreur=true; //pas d'erreur globale
     m_solution=NULL;
     m_mere=NULL;
+    debut();
+//    cout<<"construction Essai r�ussie ..."<<endl;
+}
+
+void Essai::debut() {
     m_niveau = 0;
     nbr_niveaux = 45;
-//    cout<<"construction Essai r�ussie ..."<<endl;
 }
 
 bool Essai::iterer(){ //ajouter les essais ! tous
@@ -1346,11 +1350,14 @@ Profondeur::Profondeur(string string_sudoku) : Carte(string_sudoku){
     m_niveauSup=NULL;
     m_possible.m_valeur=0;
     m_niveau = 0;
-    niveau_iter = -1;
     m_essai = NULL;
-    nbr_niveaux = 10;
+    debut();
     //    faireCalculer();
+}
 
+void Profondeur::debut() {
+    niveau_iter = -1;
+    nbr_niveaux = 10;
 }
 
 bool Profondeur::choisirPossible(){ 

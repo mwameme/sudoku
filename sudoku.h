@@ -185,7 +185,7 @@ public :
     double m_fact_alea;
 
     int m_niveau;
-
+    void debut();
 };
 
 void melangerListe(std::vector<Essai*>& mon_vecteur);
@@ -229,6 +229,7 @@ public :
 
     int deniere_modification();
     int m_niveau;
+    void debut();
 //    bool erreur_iterer;
 };
 

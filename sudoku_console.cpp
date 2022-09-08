@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
 							delete m_sudoku->m_liste_tests[i];
 						m_sudoku->m_liste_tests.clear();
 					}
+					m_sudoku->debut();
 					goto exception0;
 				}
 			}
@@ -202,6 +203,7 @@ int main(int argc, char* argv[])
 					++nbrIter;
 					if (m_profondeur->m_niveauSup)
 						delete m_profondeur->m_niveauSup;
+					m_profondeur->debut();
 					if (nbrIter < 3)
 						goto exception2;
 					else throw(e);
