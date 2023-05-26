@@ -44,6 +44,8 @@ Cellule::Cellule(Cellule const& cellule){
     m_taille = cellule.m_taille;
     m_x=cellule.m_x;
     m_y=cellule.m_y;
+    m_carte = cellule.m_carte;
+
 }
 
 
@@ -125,7 +127,7 @@ Ligne::Ligne(int j, Carte* carte)  // cree la ligne
         for(int i(0); i<9; ++i)
             if (m_cellules[i]->m_listeNum[num]==true)
                 m_liste_num[num].push_back(m_cellules[i]);
-		m_liste_num[num].reserve(0);
+//		m_liste_num[num].reserve(0);
 	}
 }
 
@@ -140,7 +142,7 @@ Ligne::Ligne(Ligne const& ligne, Carte* carte){
 		m_liste_num[num].reserve(ligne.m_liste_num[num].size());
         for(int k(0);k<ligne.m_liste_num[num].size();++k)
             m_liste_num[num].push_back(&( carte->m_liste_cellules[ligne.m_liste_num[num][k]->m_x][ligne.m_liste_num[num][k]->m_y]));
-		m_liste_num[num].reserve(0);
+//		m_liste_num[num].reserve(0);
 	}
     return;
 }
@@ -201,7 +203,7 @@ Colonne::Colonne(int i, Carte* carte)
         for(int j(0); j<9; ++j)
             if (m_cellules[j]->m_listeNum[num]==true)
                 m_liste_num[num].push_back(m_cellules[j]);
-		m_liste_num[num].reserve(0);
+//		m_liste_num[num].reserve(0);
 	}
     return;
 }
@@ -218,7 +220,7 @@ Colonne::Colonne(Colonne const& colonne, Carte* carte){
 		m_liste_num[num].reserve(colonne.m_liste_num[num].size());
         for(int k(0);k<colonne.m_liste_num[num].size();++k)
             m_liste_num[num].push_back(& (carte->m_liste_cellules[colonne.m_liste_num[num][k]->m_x][colonne.m_liste_num[num][k]->m_y]));
-		m_liste_num[num].reserve(0);
+//		m_liste_num[num].reserve(0);
 	}
 }
 
@@ -282,7 +284,7 @@ Carre::Carre(int c,Carte* carte)
 			for(int j(0); j<3; ++j)
                 if (m_cellules[i+3*j]->m_listeNum[num]==true)
                     m_liste_num[num].push_back(m_cellules[i+3*j]);
-		m_liste_num[num].reserve(0);
+//		m_liste_num[num].reserve(0);
 	}
 
 }
@@ -300,7 +302,7 @@ Carre::Carre(Carre const& carre, Carte* carte){
 		m_liste_num[num].reserve(carre.m_liste_num[num].size());
         for(int iter(0);iter<carre.m_liste_num[num].size();++iter)
             m_liste_num[num].push_back(& carte->m_liste_cellules[carre.m_liste_num[num][iter]->m_x][carre.m_liste_num[num][iter]->m_y]);
-		m_liste_num[num].reserve(0);
+//		m_liste_num[num].reserve(0);
 	}
     return;
 }
@@ -1017,24 +1019,59 @@ bool Essai::enlever(int x,int y,int val){ //retourne faux si probleme dans la ca
 //Essai::Carte(Essai const& essai){
 
 void Essai::nettoyerListe(){
-    int i(0); //on retire les elements morts ...
+    //on retire les elements morts ...
+    int j = 0;
+    for (int i(0); i < m_liste_tests.size(); ++i)
+        if (m_liste_tests[i]->m_erreur)
+            ++j;
+    std::vector<Essai*> vec_2(j, NULL );
+    j = 0;
+    int i = 0;
+    /*
     while(i < m_liste_tests.size()){ //tant qu'on n'est pas hors de la liste !
         if (! m_liste_tests[i]->m_erreur) { //� retirer !
             delete m_liste_tests[i]; //destructeur ...
             m_liste_tests.erase(m_liste_tests.begin()+i); //mise a jour de la liste
         }
         else ++i; //ou incrementer
+    }*/
+
+    while (i < m_liste_tests.size()) { //tant qu'on n'est pas hors de la liste !
+        if (!m_liste_tests[i]->m_erreur) { //� retirer !
+            delete m_liste_tests[i]; //destructeur ...
+            ++i;
+        }
+        else {
+            vec_2[j] = m_liste_tests[i];
+            ++i; //incrementer
+            ++j;
+        }
     }
 
         //si l'hypoth�se est d�j� v�rifi�e dans la carte de base (carte m�re) : on enl�ve l'hypoth�se !
     i=0;
+    j = 0;
+    /*
     while(i<m_liste_tests.size()){
-        if (m_liste_cellules[m_liste_tests[i]->m_x][m_liste_tests[i]->m_y].m_valeur == m_liste_tests[i]->m_val){
+        if (m_liste_cellules[m_liste_tests[i]->m_x][m_liste_tests[i]->m_y].m_valeur == m_liste_tests[i]->m_val) {
             delete m_liste_tests[i];
-            m_liste_tests.erase(m_liste_tests.begin()+i);
+            ++i;
         }
-        else ++i;
+        else
+            ++i;
+    }*/
+    while (i < vec_2.size()) {
+        if (m_liste_cellules[vec_2[i]->m_x][vec_2[i]->m_y].m_valeur == vec_2[i]->m_val) {
+            delete vec_2[i];
+            ++i;
+        }
+        else {
+            m_liste_tests[j] = vec_2[i];
+            ++i;
+            ++j;
+        }
     }
+    m_liste_tests.resize(j);
 
 }
 
@@ -1104,7 +1141,7 @@ bool Essai::iterer(){ //ajouter les essais ! tous
                         }
                     }
     //cout<<"fin du calcul !"<<endl;
-	m_liste_tests.reserve(0);
+//	m_liste_tests.reserve(0);
     nettoyerListe();
 
 
@@ -1250,7 +1287,7 @@ void Essai::viderListe(){
         delete m_liste_tests[i];
         m_liste_tests.erase(m_liste_tests.begin()+i);
     }
-	m_liste_tests.reserve(0);
+//	m_liste_tests.reserve(0);
     return;
 }
 
@@ -1432,7 +1469,7 @@ bool Profondeur::essayer(){
 bool Profondeur::boucle(){
 
     if (nbr_niveaux <=0 ) {
-        cout << "fin niveau ...";
+//        cout << "fin niveau ...";
         throw runtime_error("Trop de niveaux générés");
     }
 
@@ -1443,7 +1480,7 @@ bool Profondeur::boucle(){
 	
 	if (nbr_boucle >= 5)//éviter les pièges en profondeur. IMPORTANT
         if (m_niveau > niveau_iter) {
-            cout << "ITERER niveau : " << m_niveau << endl;
+//            cout << "ITERER niveau : " << m_niveau << endl;
             niveau_iter = m_niveau;
 //            erreur_iterer = false;
 
