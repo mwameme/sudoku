@@ -154,14 +154,15 @@ void Fenetre::genererSolution(){
 
     bool m_erreur_carte = true;
 
+    Carte* carte = NULL;
+    Essai* m_sudoku = NULL;
+
     try{
     //niveau un minimum, 0
     // niveau un temperature, 3
     //niveau un aleatoire, 1
     //profondeur aleatoire, 2
     //juste premier calcul : 4
-    Carte* carte = NULL;
-    Essai* m_sudoku = NULL;
     string string_sudoku(chaine_entree);
 
     cout << "choix : " << choix << endl;
@@ -446,5 +447,11 @@ void Fenetre::genererSolution(){
         m_fenetre_resultat->setWindowTitle("résolution");
         m_fenetre_resultat->show();
 
+        if(m_sudoku)
+            delete m_sudoku;
+        if(m_profondeur)
+            delete m_profondeur;
+        m_sudoku = NULL;
+        m_profondeur = NULL;
     }
 }
